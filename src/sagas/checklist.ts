@@ -31,7 +31,7 @@ import Client from "@colab/client";
 
 function* create({ payload, meta }: CreateChecklistAction): Iterable<any> {
     try {
-        const { data } = yield Client.createChecklist(payload) as any;
+        const { data } = (yield Client.createChecklist(payload)) as any;
         yield put(checklistCreated(data));
         meta.success(data);
     } catch (e) {

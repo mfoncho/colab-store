@@ -57,7 +57,7 @@ function* fetch({ payload, meta }: FetchMessagesAction): Iterable<any> {
 
 function* post({ payload, meta }: PostMessageAction): Iterable<any>{
     try {
-        const { data } = (yield client.postMessage(payload)) Iterable<any>;
+        const { data } = (yield client.postMessage(payload)) as any;
         yield put(newMessage(data));
         meta.success(data);
     } catch (e) {
@@ -89,7 +89,7 @@ function* flag({ payload, meta }: FlagMessageAction) : Iterable<any>{
 
 function* pin({ payload, meta }: PinMessageAction): Iterable<any> {
     try {
-        const { data } = yield client.channel.pinMessage(payload);
+        const { data } = (yield client.pinMessage(payload)) as any;
         yield put(messageUpdated(data));
         meta.success(data);
     } catch (e) {
@@ -99,7 +99,7 @@ function* pin({ payload, meta }: PinMessageAction): Iterable<any> {
 
 function* unflag({ payload, meta }: UnflagMessageAction) : Iterable<any>{
     try {
-        const { data } = yield client.channel.unflagMessage(payload);
+        const { data } = (yield client.unflagMessage(payload)) as any;
         yield put(messageUpdated(data));
         meta.success(data);
     } catch (e) {
@@ -109,7 +109,7 @@ function* unflag({ payload, meta }: UnflagMessageAction) : Iterable<any>{
 
 function* unpin({ payload, meta }: UnpinMessageAction) : Iterable<any>{
     try {
-        const { data } = yield client.channel.unpinMessage(payload);
+        const { data } = (yield client.unpinMessage(payload)) as any;
         yield put(messageUpdated(data));
         meta.success(data);
     } catch (e) {
@@ -136,7 +136,7 @@ function* react({ payload, meta }: ReactMessageAction) : Iterable<any>{
 function* unreact({ payload, meta }: UnreactMessageAction) : Iterable<any>{
     try {
         const { data } = (yield client.unreactMessage(payload)) as any;
-        const { auth } = (yield select()) as State;
+        const { auth } = (yield select()) as any as State;
         const partial = {
             name: payload.name,
             message_id: payload.message_id,
@@ -177,7 +177,7 @@ function* update({ payload, meta }: UpdateMessageAction) : Iterable<any>{
 }
 
 function* reacted({ payload }: UserReactedAction) : Iterable<any>{
-    const { threads } = (yield select()) as State;
+    const { threads } = (yield select()) as any as State;
     if (threads.hasMessage(payload.message_id)) {
         const message = threads.getMessage(payload.message_id)!;
         const rtx = message.reactions.find((rtx) => rtx.name == payload.name);
@@ -222,7 +222,7 @@ function* reacted({ payload }: UserReactedAction) : Iterable<any>{
 }
 
 function* unreacted({ payload }: UserUnreactedAction) : Iterable<any>{
-    const { threads } = (yield select()) as State;
+    const { threads } = (yield select()) as any as State;
     if (threads.hasMessage(payload.message_id)) {
         const message = threads.getMessage(payload.message_id)!;
         const rtx = message.reactions.find((rtx) => rtx.name == payload.name);

@@ -16,7 +16,7 @@ export const factory = (
     effect = takeEvery
 ) => {
     function* worker(sigsrt: any) {
-        let sigtstp = { type: SIGTSTP };
+        let sigtstp = { type: SIGTSTP, id: ''};
 
         const job = {
             id: sigsrt.id,

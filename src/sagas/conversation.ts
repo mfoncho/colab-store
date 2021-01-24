@@ -73,11 +73,11 @@ function* load({ payload, meta }: LoadConversationAction): Iterable<any> {
             })
         );
 
-        const { data } = yield client.fetchMessages({
+        const { data } = (yield client.fetchMessages({
             channel_id: payload.channel_id,
             thread_id: payload.thread_id,
             params,
-        });
+        })) as any;
         const [normalized, related] = MessageSchema.normalizeMany(data);
         yield put(storeRelated(related));
         if (payload.more == "top") {
