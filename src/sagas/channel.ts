@@ -25,6 +25,7 @@ import {
     channelUpdated,
     ClearChannelAction,
     removeChannel,
+    putChannels,
 } from "../actions/channel";
 import {
     JOIN_CHANNEL,
@@ -44,7 +45,12 @@ import {
 import { memberUpdated, memberJoined, memberLeft } from "../actions/member";
 import { loadTopics } from "../actions/thread";
 
-function* init(): Iterable<any> {}
+function* init(): Iterable<any> {
+    try {
+        const { data } = (yield Client.fetchChannels({})) as any;
+        yield put(putChannels(data));
+    } catch (e) {}
+}
 
 function* archive({ payload, meta }: ArchiveChannelAction): Iterable<any> {
     try {
