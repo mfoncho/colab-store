@@ -4,12 +4,16 @@
     "description": "colab store",
     "main": "lib/index.js",
     "scripts": {
-        "build": "tsc -p .",
+        "build": "tsc",
         "test": "yarn test"
     },
     "prettier": {
         "tabWidth": 4,
         "jsxBracketSameLine": true
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/mfoncho/colab-store"
     },
     "author": "Mfoncho Che",
     "license": "ISC",
