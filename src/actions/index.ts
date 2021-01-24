@@ -1,5 +1,4 @@
-import axios from "axios";
-
+import client from "@colab/client";
 
 export interface CommandAction<T = string> {
     readonly type: T;
@@ -53,7 +52,7 @@ export function createIOAction<S, T = string, P = any>(type: T, payload: P) {
         success = res;
     });
 
-    let source = axios.CancelToken.source();
+    let source = client.cancelToken();
 
     return {
         type: type,
