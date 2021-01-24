@@ -28,6 +28,8 @@
         "@types/react-redux": "^7.1.16",
         "@types/react-router": "^5.1.11",
         "@types/redux-saga": "^0.10.5",
+        "@colab/types": "git+https://github.com/mfoncho/colab-types",
+        "@colab/client": "git+https://github.com/mfoncho/colab-client",
         "immutable": "^4.0.0-rc.12",
         "lodash": "^4.17.20",
         "moment": "^2.29.1",
