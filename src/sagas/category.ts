@@ -1,10 +1,11 @@
 import { put, select, takeEvery } from "redux-saga/effects";
+import { State } from "..";
 import { PATCH_WORKSPACE } from "../actions/types";
 
-function* deleted({ payload }: any) {
-    const { workspaces } = yield select();
+function* deleted({ payload }: any): Iterable<any> {
+    const { workspaces } = ((yield select()) as any) as State;
 
-    const workspace = workspaces[payload.workspace_id];
+    const workspace = workspaces.get(payload.workspace_id);
 
     if (workspace) {
         let categories = workspace.categories.filter(
@@ -18,10 +19,10 @@ function* deleted({ payload }: any) {
     }
 }
 
-function* created({ payload }: any) {
-    const { workspaces } = yield select();
+function* created({ payload }: any): Iterable<any> {
+    const { workspaces } = ((yield select()) as any) as State;
 
-    const workspace = workspaces[payload.workspace_id];
+    const workspace = workspaces.get(payload.workspace_id);
 
     if (workspace) {
         let category = workspace.categories.find(
@@ -38,7 +39,7 @@ function* created({ payload }: any) {
     }
 }
 
-function* updated({ payload }: any) {
+function* updated({ payload }: any): Iterable<any> {
     yield put({ type: PATCH_WORKSPACE, payload: payload });
 }
 

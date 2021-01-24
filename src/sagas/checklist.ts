@@ -29,9 +29,9 @@ import {
 } from "../actions/board";
 import Client from "@colab/client";
 
-function* create({ payload, meta }: CreateChecklistAction) {
+function* create({ payload, meta }: CreateChecklistAction): Iterable<any> {
     try {
-        const { data } = yield Client.board.createChecklist(payload);
+        const { data } = yield Client.createChecklist(payload) as any;
         yield put(checklistCreated(data));
         meta.success(data);
     } catch (e) {
@@ -39,9 +39,9 @@ function* create({ payload, meta }: CreateChecklistAction) {
     }
 }
 
-function* update({ payload, meta }: UpdateChecklistAction) {
+function* update({ payload, meta }: UpdateChecklistAction): Iterable<any> {
     try {
-        const { data } = yield Client.board.updateChecklist(payload);
+        const { data } = (yield Client.updateChecklist(payload)) as any;
         yield put(checklistUpdated(data));
         meta.success(data);
     } catch (e) {
@@ -49,9 +49,9 @@ function* update({ payload, meta }: UpdateChecklistAction) {
     }
 }
 
-function* trash({ payload, meta }: DeleteChecklistAction) {
+function* trash({ payload, meta }: DeleteChecklistAction): Iterable<any> {
     try {
-        const { data } = yield Client.board.deleteChecklist(payload);
+        const { data } = (yield Client.deleteChecklist(payload)) as any;
         meta.success(data);
         yield put(checklistDeleted({ ...payload, id: payload.checklist_id }));
     } catch (e) {
@@ -59,7 +59,7 @@ function* trash({ payload, meta }: DeleteChecklistAction) {
     }
 }
 
-function* created({ payload }: ChecklistCreatedAction) {
+function* created({ payload }: ChecklistCreatedAction): Iterable<any> {
     let [checklists, related] = ChecklistSchema.normalize(payload);
 
     yield put(storeRelated(related));
@@ -70,7 +70,7 @@ function* created({ payload }: ChecklistCreatedAction) {
     }
 }
 
-function* patch({ payload }: ChecklistUpdatedAction) {
+function* patch({ payload }: ChecklistUpdatedAction): Iterable<any> {
     let [checklist, related] = ChecklistSchema.normalize(payload);
     yield put(storeRelated(related));
     if (Array.isArray(checklist)) {
@@ -80,12 +80,12 @@ function* patch({ payload }: ChecklistUpdatedAction) {
     }
 }
 
-function* remove({ payload }: ChecklistDeletedAction) {
+function* remove({ payload }: ChecklistDeletedAction): Iterable<any> {
     yield put(removeChecklist(payload));
 }
 
-function* related({ payload }: StoreRelatedAction) {
-    let checklists = ChecklistSchema.getCollection(payload);
+function* related({ payload }: StoreRelatedAction): Iterable<any> {
+    let checklists = ChecklistSchema.getCollection(payload) as any;
 
     if (checklists.length > 0) {
         yield put(putChecklists(checklists));

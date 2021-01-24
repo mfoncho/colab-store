@@ -68,18 +68,20 @@ import {
 import { storeRelated, StoreRelatedAction } from "../actions/app";
 import Client, { io } from "@colab/client";
 
-function* fetch({ payload, meta }: FetchCardsAction) {
+function* fetch({ payload, meta }: FetchCardsAction): Iterable<any> {
     try {
-        const { data } = yield Client.board.fetchCards(payload);
+        const { data } = (yield Client.fetchCards(payload)) as any;
         meta.success(data);
     } catch (e) {
         meta.error(e);
     }
 }
 
-function* load({ payload, meta }: LoadCardsAction) {
+function* load({ payload, meta }: LoadCardsAction): Iterable<any> {
     try {
-        const data = yield yield put(fetchCards(payload));
+        const data = ((yield yield put(
+            fetchCards(payload)
+        )) as any) as io.Card[];
         yield put(storeCards(data));
         meta.success(data);
     } catch (e) {
@@ -87,9 +89,9 @@ function* load({ payload, meta }: LoadCardsAction) {
     }
 }
 
-function* create({ payload, meta }: CreateCardAction) {
+function* create({ payload, meta }: CreateCardAction): Iterable<any> {
     try {
-        const { data } = yield Client.board.createCard(payload);
+        const { data } = (yield Client.createCard(payload)) as any;
 
         yield put(cardCreated(data));
 
@@ -99,9 +101,9 @@ function* create({ payload, meta }: CreateCardAction) {
     }
 }
 
-function* update({ payload, meta }: UpdateCardAction) {
+function* update({ payload, meta }: UpdateCardAction): Iterable<any> {
     try {
-        const { data } = yield Client.board.updateCard(payload);
+        const { data } = (yield Client.updateCard(payload)) as any;
         meta.success(data);
         yield put(cardUpdated(data));
     } catch (e) {
@@ -109,11 +111,11 @@ function* update({ payload, meta }: UpdateCardAction) {
     }
 }
 
-function* move({ payload, meta }: MoveCardAction) {
+function* move({ payload, meta }: MoveCardAction): Iterable<any> {
     if (payload.position == 0 || payload.position) {
         let patches: CardPosition[] = [];
 
-        let { cards } = (yield select()) as State;
+        let { cards } = ((yield select()) as any) as State;
 
         const path = cards.paths.get(payload.card_id)!;
 
@@ -165,7 +167,7 @@ function* move({ payload, meta }: MoveCardAction) {
     }
 
     try {
-        const { data } = yield Client.board.moveCard(payload);
+        const { data } = (yield Client.moveCard(payload)) as any;
         yield put(cardUpdated(data));
         meta.success(data);
     } catch (e) {
@@ -175,7 +177,7 @@ function* move({ payload, meta }: MoveCardAction) {
 
 function* store({
     payload,
-}: CardCreatedAction | StoreCardAction | StoreCardsAction) {
+}: CardCreatedAction | StoreCardAction | StoreCardsAction): Iterable<any> {
     let [cards, related] = CardSchema.normalize(payload as any);
 
     yield put(storeRelated(related));
@@ -187,7 +189,9 @@ function* store({
     }
 }
 
-function* patch({ payload }: PatchCardAction | PatchCardsAction) {
+function* patch({
+    payload,
+}: PatchCardAction | PatchCardsAction): Iterable<any> {
     let [cards, related] = CardSchema.normalize(payload as any);
 
     yield put(storeRelated(related));
@@ -199,8 +203,8 @@ function* patch({ payload }: PatchCardAction | PatchCardsAction) {
     }
 }
 
-function* tagged({ payload }: CardTaggedAction) {
-    const { cards } = (yield select()) as State;
+function* tagged({ payload }: CardTaggedAction): Iterable<any> {
+    const { cards } = ((yield select()) as any) as State;
     const path = cards.paths.get(payload.card_id);
 
     if (path) {
@@ -221,8 +225,8 @@ function* tagged({ payload }: CardTaggedAction) {
     }
 }
 
-function* untagged({ payload }: CardUntaggedAction) {
-    const { cards } = (yield select()) as State;
+function* untagged({ payload }: CardUntaggedAction): Iterable<any> {
+    const { cards } = ((yield select()) as any) as State;
     const path = cards.paths.get(payload.card_id);
 
     if (path) {
@@ -241,11 +245,13 @@ function* untagged({ payload }: CardUntaggedAction) {
     }
 }
 
-function* remove({ payload }: CardDeletedAction | CardArchivedAction) {
+function* remove({
+    payload,
+}: CardDeletedAction | CardArchivedAction): Iterable<any> {
     yield put(removeCard(payload.id));
 }
 
-function* related({ payload }: StoreRelatedAction) {
+function* related({ payload }: StoreRelatedAction): Iterable<any> {
     let cards = CardSchema.getCollection(payload);
 
     if (cards.length > 0) {
@@ -253,9 +259,9 @@ function* related({ payload }: StoreRelatedAction) {
     }
 }
 
-function* trash({ payload, meta }: DeleteCardAction) {
+function* trash({ payload, meta }: DeleteCardAction): Iterable<any> {
     try {
-        const { data } = yield Client.board.deleteCard(payload);
+        const { data } = (yield Client.deleteCard(payload)) as any;
         meta.success(data);
         yield put(cardDeleted(payload.card_id));
     } catch (e) {
@@ -263,9 +269,9 @@ function* trash({ payload, meta }: DeleteCardAction) {
     }
 }
 
-function* archive({ payload, meta }: ArchiveCardAction) {
+function* archive({ payload, meta }: ArchiveCardAction): Iterable<any> {
     try {
-        const { data } = yield Client.board.archiveCard(payload);
+        const { data } = (yield Client.archiveCard(payload)) as any;
         meta.success(data);
         yield put(cardArchived(data));
     } catch (e) {
@@ -273,9 +279,9 @@ function* archive({ payload, meta }: ArchiveCardAction) {
     }
 }
 
-function* done({ payload, meta }: MarkCardAsDoneAction) {
+function* done({ payload, meta }: MarkCardAsDoneAction): Iterable<any> {
     try {
-        const { data } = yield Client.board.markAsDone(payload);
+        const { data } = (yield Client.markAsDone(payload)) as any;
         yield put(cardUpdated(data));
         meta.success(data);
     } catch (e) {
@@ -283,9 +289,9 @@ function* done({ payload, meta }: MarkCardAsDoneAction) {
     }
 }
 
-function* unarchive({ payload, meta }: UnarchiveCardAction) {
+function* unarchive({ payload, meta }: UnarchiveCardAction): Iterable<any> {
     try {
-        const { data } = yield Client.board.unarchiveCard(payload);
+        const { data } = (yield Client.unarchiveCard(payload)) as any;
         meta.success(data);
         yield put(cardUnarchived(data));
     } catch (e) {
@@ -293,9 +299,9 @@ function* unarchive({ payload, meta }: UnarchiveCardAction) {
     }
 }
 
-function* tag({ payload, meta }: TagCardAction) {
+function* tag({ payload, meta }: TagCardAction): Iterable<any> {
     try {
-        const { data } = yield Client.board.tagCard(payload);
+        const { data } = (yield Client.tagCard(payload)) as any;
         meta.success(data);
         yield put(cardTagged(data));
     } catch (e) {
@@ -303,9 +309,9 @@ function* tag({ payload, meta }: TagCardAction) {
     }
 }
 
-function* untag({ payload, meta }: UntagCardAction) {
+function* untag({ payload, meta }: UntagCardAction): Iterable<any> {
     try {
-        const { data } = yield Client.board.untagCard(payload);
+        const { data } = (yield Client.untagCard(payload)) as any;
         meta.success(data);
         yield put(cardUntagged(payload));
     } catch (e) {

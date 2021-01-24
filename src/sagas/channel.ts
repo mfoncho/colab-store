@@ -44,11 +44,11 @@ import {
 import { memberUpdated, memberJoined, memberLeft } from "../actions/member";
 import { loadTopics } from "../actions/thread";
 
-function* init() {}
+function* init(): Iterable<any> {}
 
-function* archive({ payload, meta }: ArchiveChannelAction) {
+function* archive({ payload, meta }: ArchiveChannelAction): Iterable<any> {
     try {
-        const { data } = yield Client.archiveChannel(payload);
+        const { data } = (yield Client.archiveChannel(payload)) as any;
         yield put(channelArchived(data));
         meta.success(data);
     } catch (e) {
@@ -56,9 +56,9 @@ function* archive({ payload, meta }: ArchiveChannelAction) {
     }
 }
 
-function* unarchive({ payload, meta }: UnarchiveChannelAction) {
+function* unarchive({ payload, meta }: UnarchiveChannelAction): Iterable<any> {
     try {
-        const { data } = yield Client.unarchiveChannel(payload);
+        const { data } = (yield Client.unarchiveChannel(payload)) as any;
         yield put(channelUnarchived(data));
         meta.success(data);
     } catch (e) {
@@ -66,9 +66,9 @@ function* unarchive({ payload, meta }: UnarchiveChannelAction) {
     }
 }
 
-function* load({ payload, meta }: LoadChannelAction) {
+function* load({ payload, meta }: LoadChannelAction): Iterable<any> {
     try {
-        const { data } = yield Client.getChannel(payload);
+        const { data } = (yield Client.getChannel(payload)) as any;
         yield put(putChannel(data));
         meta.success(data);
     } catch (e) {
@@ -76,7 +76,7 @@ function* load({ payload, meta }: LoadChannelAction) {
     }
 }
 
-function* fetch(action: any) {
+function* fetch(action: any): Iterable<any> {
     const { type, payload } = action;
     try {
         let path = null;
@@ -97,7 +97,7 @@ function* fetch(action: any) {
         }
 
         if (path) {
-            let { data, status } = yield Client.fetchChannels(payload);
+            let { data, status } = (yield Client.fetchChannels(payload)) as any;
 
             if (status === 200 && data.length > 0) {
                 for (let channel of data) {
@@ -110,9 +110,9 @@ function* fetch(action: any) {
     }
 }
 
-function* join({ payload, meta }: JoinChannelAction) {
+function* join({ payload, meta }: JoinChannelAction): Iterable<any> {
     try {
-        const { data } = yield Client.channel.joinChannel(payload);
+        const { data } = (yield Client.joinChannel(payload)) as any;
         yield put(channelJoined(data));
         meta.success(data);
     } catch (e) {
@@ -120,11 +120,15 @@ function* join({ payload, meta }: JoinChannelAction) {
     }
 }
 
-function* patch({ payload }: PatchChannelAction | ChannelArchivedAction) {
+function* patch({
+    payload,
+}: PatchChannelAction | ChannelArchivedAction): Iterable<any> {
     yield put(patchChannel(payload));
 }
 
-function* subscribe({ payload }: PutChannelAction | PutChannelsAction) {
+function* subscribe({
+    payload,
+}: PutChannelAction | PutChannelsAction): Iterable<any> {
     if (!Array.isArray(payload)) {
         payload = [payload];
     }
@@ -195,9 +199,9 @@ function* subscribe({ payload }: PutChannelAction | PutChannelsAction) {
     }
 }
 
-function* create({ payload, meta }: CreateChannelAction) {
+function* create({ payload, meta }: CreateChannelAction): Iterable<any> {
     try {
-        const { data } = yield Client.channel.create(payload);
+        const { data } = (yield Client.createChannel(payload)) as any;
         yield put(channelCreated(data));
         meta.success(data);
     } catch (e) {
@@ -205,7 +209,7 @@ function* create({ payload, meta }: CreateChannelAction) {
     }
 }
 
-function* clear({ payload }: ClearChannelAction) {
+function* clear({ payload }: ClearChannelAction): Iterable<any> {
     const topic = `channel:${payload.id}`;
     let ch = (socket as any).channels.find((ch: any) => ch.topic == topic);
     if (ch) {
@@ -214,7 +218,9 @@ function* clear({ payload }: ClearChannelAction) {
     yield put(removeChannel(payload));
 }
 
-function* store({ payload }: ChannelCreatedAction | ChannelJoinedAction) {
+function* store({
+    payload,
+}: ChannelCreatedAction | ChannelJoinedAction): Iterable<any> {
     yield put(loadTopics({ channel_id: payload.id }));
     yield put(putChannel(payload));
 }

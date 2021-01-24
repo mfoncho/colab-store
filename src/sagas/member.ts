@@ -32,19 +32,19 @@ import {
 import { storeRelated } from "../actions/app";
 import { clearChannel } from "../actions/channel";
 
-function* fetch(action: FetchMembersAction) {
+function* fetch(action: FetchMembersAction): Iterable<any> {
     try {
         const { payload } = action;
-        const { data } = yield Client.channel.fetchMembers(payload);
+        const { data } = (yield Client.fetchChannelMembers(payload)) as any;
         action.meta.success(data);
     } catch (e) {
         action.meta.error(e);
     }
 }
 
-function* create({ payload, meta }: CreateMemberAction) {
+function* create({ payload, meta }: CreateMemberAction): Iterable<any> {
     try {
-        const { data } = yield Client.channel.createMember(payload);
+        const { data } = (yield Client.createChannelMember(payload)) as any;
         yield put(memberJoined(data));
         meta.success(data);
     } catch (e) {
@@ -52,21 +52,21 @@ function* create({ payload, meta }: CreateMemberAction) {
     }
 }
 
-function* joined({ payload }: MemberJoinedAction) {
+function* joined({ payload }: MemberJoinedAction): Iterable<any> {
     const [normalized, related] = MemberSchema.normalizeOne(payload);
     yield put(storeRelated(related));
     yield put(putMember(normalized));
 }
 
-function* updated({ payload }: MemberUpdatedAction) {
+function* updated({ payload }: MemberUpdatedAction): Iterable<any> {
     const [normalized, related] = MemberSchema.normalizeOne(payload);
     yield put(storeRelated(related));
     yield put(patchMember(normalized));
 }
 
-function* update({ payload, meta }: UpdateMemberAction) {
+function* update({ payload, meta }: UpdateMemberAction): Iterable<any> {
     try {
-        const { data } = yield Client.channel.updateMember(payload);
+        const { data } = (yield Client.updateChannelMember(payload)) as any;
         yield put(memberUpdated(data));
         meta.success(data);
     } catch (e) {
@@ -74,9 +74,9 @@ function* update({ payload, meta }: UpdateMemberAction) {
     }
 }
 
-function* destroy({ payload, meta }: DeleteMemberAction) {
+function* destroy({ payload, meta }: DeleteMemberAction): Iterable<any> {
     try {
-        const { data } = yield Client.channel.deleteMember(payload);
+        const { data } = (yield Client.deleteChannelMember(payload)) as any;
         yield put(
             removeMember({
                 id: payload.member_id,
@@ -89,8 +89,8 @@ function* destroy({ payload, meta }: DeleteMemberAction) {
     }
 }
 
-function* left({ payload }: MemberLeftAction) {
-    const { auth, channels } = (yield select()) as State;
+function* left({ payload }: MemberLeftAction): Iterable<any> {
+    const { auth, channels } = ((yield select()) as any) as State;
     if (auth.id == payload.user.id && channels.paths.has(payload.channel_id)) {
         const path = channels.paths.get(payload.channel_id);
         const channel = channels.entities.getIn(path as any).toJS();
@@ -100,10 +100,10 @@ function* left({ payload }: MemberLeftAction) {
     }
 }
 
-function* load(action: LoadMembersAction) {
+function* load(action: LoadMembersAction): Iterable<any> {
     try {
         const { payload } = action;
-        const members = yield yield put(fetchMembers(payload));
+        const members = (yield yield put(fetchMembers(payload))) as any;
         const [normalized, related] = MemberSchema.normalizeMany(members);
         yield put(storeRelated(related));
         yield put(putMembers(normalized));

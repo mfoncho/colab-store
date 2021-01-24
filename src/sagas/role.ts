@@ -28,18 +28,21 @@ import {
 } from "../actions/channelRole";
 import Client from "@colab/client";
 
-function* fetch({ payload, meta }: FetchChannelRolesAction) {
+function* fetch({ payload, meta }: FetchChannelRolesAction): Iterable<any> {
     try {
-        const { data } = yield Client.channel.fetchRoles(payload);
+        const { data } = (yield Client.fetchRoles(payload)) as any;
         meta.success(data);
     } catch (e) {
         meta.error(e);
     }
 }
 
-function* setDefault({ payload, meta }: SetDefaultChannelRoleAction) {
+function* setDefault({
+    payload,
+    meta,
+}: SetDefaultChannelRoleAction): Iterable<any> {
     try {
-        const { data } = yield Client.channel.setDefaultRole(payload);
+        const { data } = (yield Client.setDefaultRole(payload)) as any;
         yield put(patchChannelRole(data));
         meta.success(data);
     } catch (e) {
@@ -47,9 +50,9 @@ function* setDefault({ payload, meta }: SetDefaultChannelRoleAction) {
     }
 }
 
-function* load({ payload, meta }: LoadChannelRolesAction) {
+function* load({ payload, meta }: LoadChannelRolesAction): Iterable<any> {
     try {
-        const roles = yield yield put(fetchChannelRoles(payload));
+        const roles = (yield yield put(fetchChannelRoles(payload))) as any;
         yield put(putChannelRoles(roles));
         meta.success(roles);
     } catch (e) {
@@ -57,9 +60,9 @@ function* load({ payload, meta }: LoadChannelRolesAction) {
     }
 }
 
-function* create({ payload, meta }: CreateChannelRoleAction) {
+function* create({ payload, meta }: CreateChannelRoleAction): Iterable<any> {
     try {
-        const { data } = yield Client.channel.createRole(payload);
+        const { data } = (yield Client.createRole(payload)) as any;
         yield put(roleCreated(data));
         meta.success(data);
     } catch (e) {
@@ -67,13 +70,13 @@ function* create({ payload, meta }: CreateChannelRoleAction) {
     }
 }
 
-function* created({ payload }: ChannelRoleCreatedAction) {
+function* created({ payload }: ChannelRoleCreatedAction): Iterable<any> {
     yield put(putChannelRole(payload));
 }
 
-function* update({ payload, meta }: UpdateChannelRoleAction) {
+function* update({ payload, meta }: UpdateChannelRoleAction): Iterable<any> {
     try {
-        const { data } = yield Client.channel.updateRole(payload);
+        const { data } = (yield Client.updateRole(payload)) as any;
         yield put(roleUpdated(data));
         meta.success(data);
     } catch (e) {
@@ -81,13 +84,13 @@ function* update({ payload, meta }: UpdateChannelRoleAction) {
     }
 }
 
-function* updated({ payload }: ChannelRoleUpdatedAction) {
+function* updated({ payload }: ChannelRoleUpdatedAction): Iterable<any> {
     yield put(patchChannelRole(payload));
 }
 
-function* destroy({ payload, meta }: DeleteChannelRoleAction) {
+function* destroy({ payload, meta }: DeleteChannelRoleAction): Iterable<any> {
     try {
-        const { data } = yield Client.channel.deleteRole(payload);
+        const { data } = (yield Client.deleteRole(payload)) as any;
         yield put(
             removeChannelRole({
                 id: payload.role_id,

@@ -48,20 +48,20 @@ import {
 } from "../actions/board";
 import { storeRelated, StoreRelatedAction } from "../actions/app";
 
-function* fetch({ payload, meta }: FetchColumnsAction) {
+function* fetch({ payload, meta }: FetchColumnsAction): Iterable<any> {
     try {
-        const { data } = yield Client.board.fetchColumns(payload);
+        const { data } = (yield Client.fetchColumns(payload)) as any;
         meta.success(data);
     } catch (e) {
         meta.error(e.toString());
     }
 }
 
-function* load({ payload, meta }: LoadColumnsAction) {
+function* load({ payload, meta }: LoadColumnsAction): Iterable<any> {
     try {
         const task = yield put(fetchColumns(payload));
 
-        const columns = yield task;
+        const columns = (yield task) as any;
 
         let [normalized, related] = ColumnSchema.normalize(columns);
 
@@ -76,10 +76,10 @@ function* load({ payload, meta }: LoadColumnsAction) {
     }
 }
 
-function* move({ payload, meta }: MoveColumnAction) {
+function* move({ payload, meta }: MoveColumnAction): Iterable<any> {
     let patches = [] as { id: string; position: number }[];
 
-    let { columns } = (yield select()) as State;
+    let { columns } = ((yield select()) as any) as State;
 
     const path = columns.paths.get(payload.column_id);
 
@@ -100,7 +100,7 @@ function* move({ payload, meta }: MoveColumnAction) {
         yield put(columnsReordered(patches));
 
         try {
-            const { data } = yield Client.board.moveColumn(payload);
+            const { data } = (yield Client.moveColumn(payload)) as any;
             meta.success(data);
         } catch (e) {
             meta.error(e.toString());
@@ -108,7 +108,7 @@ function* move({ payload, meta }: MoveColumnAction) {
     }
 }
 
-function* patch({ payload }: ColumnUpdatedAction) {
+function* patch({ payload }: ColumnUpdatedAction): Iterable<any> {
     let [normalized, related] = ColumnSchema.normalize(payload);
 
     yield put(storeRelated(related));
@@ -120,14 +120,14 @@ function* patch({ payload }: ColumnUpdatedAction) {
     }
 }
 
-function* related({ payload }: StoreRelatedAction) {
+function* related({ payload }: StoreRelatedAction): Iterable<any> {
     let columns = ColumnSchema.getCollection(payload);
     if (columns.length > 0) {
         yield put(putColumns(columns));
     }
 }
 
-function* store({ payload }: StoreColumnsAction) {
+function* store({ payload }: StoreColumnsAction): Iterable<any> {
     let [normalized, related] = ColumnSchema.normalize(payload);
 
     yield put(storeRelated(related));
@@ -139,7 +139,7 @@ function* store({ payload }: StoreColumnsAction) {
     }
 }
 
-function* created({ payload }: ColumnCreateAction) {
+function* created({ payload }: ColumnCreateAction): Iterable<any> {
     let [normalized, related] = ColumnSchema.normalize(payload);
 
     yield put(storeRelated(related));
@@ -151,9 +151,9 @@ function* created({ payload }: ColumnCreateAction) {
     }
 }
 
-function* archive({ payload, meta }: ArchiveColumnAction) {
+function* archive({ payload, meta }: ArchiveColumnAction): Iterable<any> {
     try {
-        const { data } = yield Client.board.archiveColumn(payload);
+        const { data } = (yield Client.archiveColumn(payload)) as any;
         yield put(columnArchived(data));
         meta.success(data);
     } catch (e) {
@@ -161,9 +161,9 @@ function* archive({ payload, meta }: ArchiveColumnAction) {
     }
 }
 
-function* unarchive({ payload, meta }: UnarchiveColumnAction) {
+function* unarchive({ payload, meta }: UnarchiveColumnAction): Iterable<any> {
     try {
-        const { data } = yield Client.board.unarchiveColumn(payload);
+        const { data } = (yield Client.unarchiveColumn(payload)) as any;
         yield put(columnUnarchived(data));
         meta.success(data);
     } catch (e) {
@@ -171,13 +171,13 @@ function* unarchive({ payload, meta }: UnarchiveColumnAction) {
     }
 }
 
-function* remove({ payload }: ColumnDeletedAction) {
+function* remove({ payload }: ColumnDeletedAction): Iterable<any> {
     yield put(removeColumn(payload.id));
 }
 
-function* update({ payload, meta }: UpdateColumnAction) {
+function* update({ payload, meta }: UpdateColumnAction): Iterable<any> {
     try {
-        const { data } = yield Client.board.updateColumn(payload);
+        const { data } = (yield Client.updateColumn(payload)) as any;
         yield put(columnUpdated(data));
         meta.success(data);
     } catch (e) {
@@ -185,9 +185,9 @@ function* update({ payload, meta }: UpdateColumnAction) {
     }
 }
 
-function* trash({ payload, meta }: DeleteColumnAction) {
+function* trash({ payload, meta }: DeleteColumnAction): Iterable<any> {
     try {
-        const { data } = yield Client.board.deleteColumn(payload);
+        const { data } = (yield Client.deleteColumn(payload)) as any;
         meta.success(data);
         const params = {
             id: payload.column_id,
@@ -199,9 +199,9 @@ function* trash({ payload, meta }: DeleteColumnAction) {
     }
 }
 
-function* create({ payload, meta }: CreateColumnAction) {
+function* create({ payload, meta }: CreateColumnAction): Iterable<any> {
     try {
-        const { data } = yield Client.board.createColumn(payload);
+        const { data } = (yield Client.createColumn(payload)) as any;
         yield put(columnCreated(data));
         meta.success(data);
     } catch (e) {

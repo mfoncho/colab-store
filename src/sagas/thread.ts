@@ -49,9 +49,9 @@ import {
 } from "../actions/types";
 import { State } from "..";
 
-function* load({ payload, meta }: LoadThreadAction) {
+function* load({ payload, meta }: LoadThreadAction): Iterable<any> {
     try {
-        const { data } = yield Client.channel.loadThread(payload);
+        const { data } = (yield Client.loadThread(payload)) as any;
         yield put(putThread(data));
         meta.success(data);
     } catch (e) {
@@ -59,9 +59,9 @@ function* load({ payload, meta }: LoadThreadAction) {
     }
 }
 
-function* loadTopics({ payload, meta }: LoadTopicsAction) {
+function* loadTopics({ payload, meta }: LoadTopicsAction): Iterable<any> {
     try {
-        const { data } = yield Client.fetchChannelTopics(payload);
+        const { data } = (yield Client.fetchChannelTopics(payload)) as any;
         yield put(putThreads(data));
         meta.success(data);
     } catch (e) {
@@ -69,16 +69,16 @@ function* loadTopics({ payload, meta }: LoadTopicsAction) {
     }
 }
 
-function* fetch() {
+function* fetch(): Iterable<any> {
     try {
-        const { data } = yield Client.fetchThreads();
+        const { data } = (yield Client.fetchThreads()) as any;
         yield put(putThreads(data));
     } catch (e) {}
 }
 
-function* create({ payload, meta }: CreateTopicAction) {
+function* create({ payload, meta }: CreateTopicAction): Iterable<any> {
     try {
-        const { data } = yield Client.createTopic(payload);
+        const { data } = (yield Client.createTopic(payload)) as any;
         yield put(threadCreated(data));
         meta.success(data);
     } catch (e) {
@@ -86,9 +86,9 @@ function* create({ payload, meta }: CreateTopicAction) {
     }
 }
 
-function* update({ payload, meta }: UpdateTopicAction) {
+function* update({ payload, meta }: UpdateTopicAction): Iterable<any> {
     try {
-        const { data } = yield Client.updateTopic(payload);
+        const { data } = (yield Client.updateTopic(payload)) as any;
         yield put(threadUpdated(data));
         meta.success(data);
     } catch (e) {
@@ -96,9 +96,9 @@ function* update({ payload, meta }: UpdateTopicAction) {
     }
 }
 
-function* trash({ payload, meta }: DeleteTopicAction) {
+function* trash({ payload, meta }: DeleteTopicAction): Iterable<any> {
     try {
-        const { data } = yield Client.deleteTopic(payload);
+        const { data } = (yield Client.deleteTopic(payload)) as any;
         yield put(
             threadDeleted({
                 id: payload.thread_id,
@@ -111,19 +111,19 @@ function* trash({ payload, meta }: DeleteTopicAction) {
     }
 }
 
-function* created({ payload }: ThreadCreatedAction) {
+function* created({ payload }: ThreadCreatedAction): Iterable<any> {
     yield put(putThread(payload));
 }
 
-function* updated({ payload }: ThreadUpdatedAction) {
+function* updated({ payload }: ThreadUpdatedAction): Iterable<any> {
     yield put(patchThread(payload));
 }
 
-function* trashed({ payload }: ThreadDeletedAction) {
+function* trashed({ payload }: ThreadDeletedAction): Iterable<any> {
     yield put(removeThread(payload));
 }
 
-function* activity({ payload }: ThreadActivityAction) {
+function* activity({ payload }: ThreadActivityAction): Iterable<any> {
     const topic = `thread:${payload.thread_id}`;
     let ch = (socket as any).channels.find((ch: any) => ch.topic == topic);
     if (ch) {
@@ -131,8 +131,11 @@ function* activity({ payload }: ThreadActivityAction) {
     }
 }
 
-function* conversation({ payload, meta }: LoadConversationAction) {
-    const { threads } = (yield select()) as State;
+function* conversation({
+    payload,
+    meta,
+}: LoadConversationAction): Iterable<any> {
+    const { threads } = ((yield select()) as any) as State;
     const thread = threads.getThread(payload.thread_id);
     if (!thread) return;
 
@@ -169,11 +172,11 @@ function* conversation({ payload, meta }: LoadConversationAction) {
             })
         );
 
-        const { data } = yield Client.fetchMessages({
+        const { data } = (yield Client.fetchMessages({
             channel_id: payload.channel_id,
             thread_id: payload.thread_id,
             params,
-        });
+        })) as any;
         const [normalized, related] = MessageSchema.normalizeMany(data);
         yield put(storeRelated(related));
         if (payload.more == "top") {
@@ -211,7 +214,9 @@ function* conversation({ payload, meta }: LoadConversationAction) {
     }
 }
 
-function* subscribe({ payload }: PutThreadAction | PutThreadsAction) {
+function* subscribe({
+    payload,
+}: PutThreadAction | PutThreadsAction): Iterable<any> {
     if (!Array.isArray(payload)) payload = [payload];
 
     for (let thread of payload) {

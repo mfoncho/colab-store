@@ -18,7 +18,6 @@ const watchers = [
     ...require("./task").tasks,
     ...require("./card").tasks,
     ...require("./board").tasks,
-    ...require("./theme").tasks,
     ...require("./thread").tasks,
     ...require("./status").tasks,
     ...require("./dialog").tasks,

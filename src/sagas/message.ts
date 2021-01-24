@@ -46,18 +46,18 @@ import {
 } from "../actions/thread";
 import { storeRelated } from "../actions/app";
 
-function* fetch({ payload, meta }: FetchMessagesAction) {
+function* fetch({ payload, meta }: FetchMessagesAction): Iterable<any> {
     try {
-        const { data } = yield client.fetchMessages(payload);
+        const { data } = (yield client.fetchMessages(payload)) as any;
         meta.success(data);
     } catch (e) {
         meta.error(e.toString());
     }
 }
 
-function* post({ payload, meta }: PostMessageAction) {
+function* post({ payload, meta }: PostMessageAction): Iterable<any>{
     try {
-        const { data } = yield client.channel.postMessage(payload);
+        const { data } = (yield client.postMessage(payload)) Iterable<any>;
         yield put(newMessage(data));
         meta.success(data);
     } catch (e) {
@@ -65,7 +65,7 @@ function* post({ payload, meta }: PostMessageAction) {
     }
 }
 
-function* created({ payload }: NewMessageAction) {
+function* created({ payload }: NewMessageAction): Iterable<any> {
     const [normalized, related] = MessageSchema.normalizeOne(payload);
     yield put(storeRelated(related));
     yield put(
@@ -77,9 +77,9 @@ function* created({ payload }: NewMessageAction) {
     );
 }
 
-function* flag({ payload, meta }: FlagMessageAction) {
+function* flag({ payload, meta }: FlagMessageAction) : Iterable<any>{
     try {
-        const { data } = yield client.channel.flagMessage(payload);
+        const { data } = (yield client.flagMessage(payload)) as any;
         yield put(messageUpdated(data));
         meta.success(data);
     } catch (e) {
@@ -87,7 +87,7 @@ function* flag({ payload, meta }: FlagMessageAction) {
     }
 }
 
-function* pin({ payload, meta }: PinMessageAction) {
+function* pin({ payload, meta }: PinMessageAction): Iterable<any> {
     try {
         const { data } = yield client.channel.pinMessage(payload);
         yield put(messageUpdated(data));
@@ -97,7 +97,7 @@ function* pin({ payload, meta }: PinMessageAction) {
     }
 }
 
-function* unflag({ payload, meta }: UnflagMessageAction) {
+function* unflag({ payload, meta }: UnflagMessageAction) : Iterable<any>{
     try {
         const { data } = yield client.channel.unflagMessage(payload);
         yield put(messageUpdated(data));
@@ -107,7 +107,7 @@ function* unflag({ payload, meta }: UnflagMessageAction) {
     }
 }
 
-function* unpin({ payload, meta }: UnpinMessageAction) {
+function* unpin({ payload, meta }: UnpinMessageAction) : Iterable<any>{
     try {
         const { data } = yield client.channel.unpinMessage(payload);
         yield put(messageUpdated(data));
@@ -117,15 +117,15 @@ function* unpin({ payload, meta }: UnpinMessageAction) {
     }
 }
 
-function* updated({ payload }: MessageUpdatedAction) {
+function* updated({ payload }: MessageUpdatedAction) : Iterable<any>{
     const [normalized, related] = MessageSchema.normalizeOne(payload);
     yield put(storeRelated(related));
     yield put(patchMessage(normalized));
 }
 
-function* react({ payload, meta }: ReactMessageAction) {
+function* react({ payload, meta }: ReactMessageAction) : Iterable<any>{
     try {
-        const { data } = yield client.reactMessage(payload);
+        const { data } = (yield client.reactMessage(payload)) as any;
         yield put(userReacted(data));
         meta.success(data);
     } catch (e) {
@@ -133,9 +133,9 @@ function* react({ payload, meta }: ReactMessageAction) {
     }
 }
 
-function* unreact({ payload, meta }: UnreactMessageAction) {
+function* unreact({ payload, meta }: UnreactMessageAction) : Iterable<any>{
     try {
-        const { data } = yield client.unreactMessage(payload);
+        const { data } = (yield client.unreactMessage(payload)) as any;
         const { auth } = (yield select()) as State;
         const partial = {
             name: payload.name,
@@ -151,9 +151,9 @@ function* unreact({ payload, meta }: UnreactMessageAction) {
     }
 }
 
-function* trash({ payload, meta }: DeleteMessageAction) {
+function* trash({ payload, meta }: DeleteMessageAction) : Iterable<any>{
     try {
-        const { data } = yield client.channel.deleteMessage(payload);
+        const { data } = (yield client.deleteMessage(payload)) as any;
         yield put(
             messageDeleted({
                 id: payload.message_id,
@@ -166,9 +166,9 @@ function* trash({ payload, meta }: DeleteMessageAction) {
     }
 }
 
-function* update({ payload, meta }: UpdateMessageAction) {
+function* update({ payload, meta }: UpdateMessageAction) : Iterable<any>{
     try {
-        const { data } = yield client.channel.updateMessage(payload);
+        const { data } = (yield client.updateMessage(payload)) as any;
         yield put(messageUpdated(data));
         meta.success(data);
     } catch (e) {
@@ -176,7 +176,7 @@ function* update({ payload, meta }: UpdateMessageAction) {
     }
 }
 
-function* reacted({ payload }: UserReactedAction) {
+function* reacted({ payload }: UserReactedAction) : Iterable<any>{
     const { threads } = (yield select()) as State;
     if (threads.hasMessage(payload.message_id)) {
         const message = threads.getMessage(payload.message_id)!;
@@ -221,7 +221,7 @@ function* reacted({ payload }: UserReactedAction) {
     }
 }
 
-function* unreacted({ payload }: UserUnreactedAction) {
+function* unreacted({ payload }: UserUnreactedAction) : Iterable<any>{
     const { threads } = (yield select()) as State;
     if (threads.hasMessage(payload.message_id)) {
         const message = threads.getMessage(payload.message_id)!;
@@ -256,7 +256,7 @@ function* unreacted({ payload }: UserUnreactedAction) {
     }
 }
 
-function* remove({ payload }: MessageDeletedAction) {
+function* remove({ payload }: MessageDeletedAction) : Iterable<any>{
     yield put(removeMessage(payload));
 }
 

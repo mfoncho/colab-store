@@ -23,7 +23,9 @@ import {
     cardUntagged,
 } from "../actions/board";
 
-function* subscribe({ payload }: PutChannelAction | PutChannelsAction) {
+function* subscribe({
+    payload,
+}: PutChannelAction | PutChannelsAction): Iterable<any> {
     if (!Array.isArray(payload)) {
         payload = [payload];
     }

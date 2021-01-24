@@ -18,9 +18,9 @@ import {
 
 import Client from "@colab/client";
 
-function* create({ payload, meta }: CreateTagAction) {
+function* create({ payload, meta }: CreateTagAction): Iterable<any> {
     try {
-        const { data } = yield Client.channel.createTag(payload);
+        const { data } = (yield Client.createTag(payload)) as any;
         yield put(tagCreated(data));
         meta.success(data);
     } catch (e) {
@@ -28,9 +28,9 @@ function* create({ payload, meta }: CreateTagAction) {
     }
 }
 
-function* destroy({ payload, meta }: DeleteTagAction) {
+function* destroy({ payload, meta }: DeleteTagAction): Iterable<any> {
     try {
-        const { data } = yield Client.channel.deleteTag(payload);
+        const { data } = (yield Client.deleteTag(payload)) as any;
         const param = {
             id: payload.tag_id,
             channel_id: payload.channel_id,
@@ -42,11 +42,11 @@ function* destroy({ payload, meta }: DeleteTagAction) {
     }
 }
 
-function* created({ payload }: TagCreatedAction) {
+function* created({ payload }: TagCreatedAction): Iterable<any> {
     yield put(putTag(payload));
 }
 
-function* deleted({ payload }: TagDeletedAction) {
+function* deleted({ payload }: TagDeletedAction): Iterable<any> {
     yield put(removeTag(payload));
 }
 

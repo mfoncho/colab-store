@@ -3,7 +3,7 @@ import { dispatch } from "..";
 import { io, socket, Presence } from "@colab/client";
 import { patchPresence, putPresence, removePresence } from "../actions/user";
 
-function* init() {
+function* init(): Iterable<any> {
     const topic = `colab`;
     let ch = socket.channel(topic, {});
     const presence = new Presence(ch);

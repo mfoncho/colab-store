@@ -7,13 +7,13 @@ import {
     LoadStatusesAction,
 } from "../actions/status";
 
-function* init() {
+function* init(): Iterable<any> {
     yield put(loadStatuses());
 }
 
-function* load({ meta }: LoadStatusesAction) {
+function* load({ meta }: LoadStatusesAction): Iterable<any> {
     try {
-        const { data } = yield client.fetchStatuses();
+        const { data } = (yield client.fetchStatuses()) as any;
         yield put(putStatuses(data));
         meta.success(data);
     } catch (e) {

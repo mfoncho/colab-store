@@ -23,9 +23,9 @@ import {
 } from "../actions/types";
 import Client from "@colab/client";
 
-function* create({ payload, meta }: CreateTaskAction) {
+function* create({ payload, meta }: CreateTaskAction): Iterable<any> {
     try {
-        const { data } = yield Client.board.createTask(payload);
+        const { data } = (yield Client.createTask(payload)) as any;
         yield put(taskCreated(data));
         meta.success(data);
     } catch (e) {
@@ -33,9 +33,9 @@ function* create({ payload, meta }: CreateTaskAction) {
     }
 }
 
-function* update({ payload, meta }: UpdateTaskAction) {
+function* update({ payload, meta }: UpdateTaskAction): Iterable<any> {
     try {
-        const { data } = yield Client.board.updateTask(payload);
+        const { data } = (yield Client.updateTask(payload)) as any;
         yield put(taskUpdated(data));
         meta.success(data);
     } catch (e) {
@@ -43,9 +43,9 @@ function* update({ payload, meta }: UpdateTaskAction) {
     }
 }
 
-function* trash({ payload, meta }: DeleteTaskAction) {
+function* trash({ payload, meta }: DeleteTaskAction): Iterable<any> {
     try {
-        const { data } = yield Client.board.deleteTask(payload);
+        const { data } = (yield Client.deleteTask(payload)) as any;
         yield put(taskDeleted({ ...payload, id: payload.task_id }));
         meta.success(data);
     } catch (e) {
@@ -53,15 +53,15 @@ function* trash({ payload, meta }: DeleteTaskAction) {
     }
 }
 
-function* created({ payload }: TaskCreatedAction) {
+function* created({ payload }: TaskCreatedAction): Iterable<any> {
     yield put(putTask(payload));
 }
 
-function* patch({ payload }: TaskUpdatedAction) {
+function* patch({ payload }: TaskUpdatedAction): Iterable<any> {
     yield put(patchTask(payload));
 }
 
-function* remove({ payload }: TaskDeletedAction) {
+function* remove({ payload }: TaskDeletedAction): Iterable<any> {
     yield put(removeTask(payload));
 }
 

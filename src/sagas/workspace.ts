@@ -1,14 +1,12 @@
 import { put, takeEvery, takeLatest, select } from "redux-saga/effects";
+import { State } from "..";
 import client from "@colab/client";
 
-function* get(action: any) {
+function* get(action: any): Iterable<any> {
     const { payload } = action;
 
     try {
-        const {
-            data,
-            status,
-        } = yield client.getWorkspace(payload);
+        const { data, status } = (yield client.getWorkspace(payload)) as any;
         if (status === 200) {
             yield put({
                 type: "INIT_WORKSPACE",
@@ -21,9 +19,9 @@ function* get(action: any) {
     }
 }
 
-function* fetch({ type, payload }: any) {
+function* fetch({ type, payload }: any): Iterable<any> {
     try {
-        const { data } = yield client.fetchWorkspaces();
+        const { data } = (yield client.fetchWorkspaces()) as any;
 
         for (let workspace of data) {
             yield put({ type: "INIT_WORKSPACE", payload: workspace });
@@ -31,12 +29,12 @@ function* fetch({ type, payload }: any) {
     } catch (e) {}
 }
 
-function* patch({ payload }: any) {
+function* patch({ payload }: any): Iterable<any> {
     yield put({ type: "PATCH_WORKSPACE", payload });
 }
 
-function* memberUpdated({ payload }: any) {
-    const { auth } = yield select();
+function* memberUpdated({ payload }: any): Iterable<any> {
+    const { auth } = ((yield select()) as any) as State;
 
     if (payload.user.id === auth.id) {
         const workspace = { id: payload.workspace_id, role: payload.role };
@@ -44,43 +42,43 @@ function* memberUpdated({ payload }: any) {
     }
 }
 
-function* destroy({ payload }: any) {
-    const state = yield select();
+function* destroy({ payload }: any): Iterable<any> {
+    const state = ((yield select()) as any) as State;
 
-    const channels = Object.values(state.channel).filter(
-        (channel: any) => channel.workspace_id === payload.id
+    const channels = Object.values(state.channels).filter(
+        (channel) => channel.workspace_id === payload.id
     );
 
     for (let channel of channels) {
         yield put({ type: "LEFT_CHANNEL", payload: channel });
     }
 
-    if (state.route.params.workspace === payload.id) {
+    if (state.route.params.get("workspace_id") === payload.id) {
         yield put({ type: "OPEN_WORKSPACE", payload: "1" });
     }
 
     yield put({ type: "REMOVE_WORKSPACE", payload: payload.id });
 }
 
-function* init({ payload }: any) {
+function* init({ payload }: any): Iterable<any> {
     yield put({ type: "STORE_WORKSPACE", payload });
 }
 
-function* serialize({ payload: { ...workspace } }: any) {
+function* serialize({ payload: { ...workspace } }: any): Iterable<any> {
     yield put({ type: "PUT_WORKSPACE", payload: workspace });
 }
 
-function* joined({ payload }: any) {
+function* joined({ payload }: any): Iterable<any> {
     yield put({ type: "INIT_WORKSPACE", payload });
 }
 
-function* left({ payload }: any) {
+function* left({ payload }: any): Iterable<any> {
     yield put({ type: "DESTROY_WORKSPACE", payload: payload });
 }
 
-function* workspaceMemberUpdated({ payload }: any) {
-    const state = yield select();
-    const workspace = state.workspaces[payload.workspace_id];
+function* workspaceMemberUpdated({ payload }: any): Iterable<any> {
+    const state = ((yield select()) as any) as State;
+    const workspace = state.workspaces.get(payload.workspace_id);
     if (state.auth.id === payload.user_id && workspace) {
         const role = payload.role ? payload.role : workspace.role;
         yield put({

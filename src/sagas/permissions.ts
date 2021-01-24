@@ -1,15 +1,8 @@
-import {put, takeEvery } from 'redux-saga/effects';
+import { put, takeEvery } from "redux-saga/effects";
 
-
-function * getWorkspacePermissions( {
-    payload
-}: any ){
-	try{
-
-
-	}catch(e){}
+function* getWorkspacePermissions({ payload }: any): Iterable<any> {
+    try {
+    } catch (e) {}
 }
 
-
-export const tasks = [
-];
+export const tasks = [];

@@ -1,15 +1,15 @@
 import { put, select, takeEvery } from "redux-saga/effects";
 import client from "@colab/client";
 
-function* getConfig() {
+function* getConfig(): Iterable<any> {
     try {
-        const { data } = yield client.getConfig();
+        const { data } = (yield client.getConfig()) as any;
         yield put({ type: "PUT_APP_CONFIG", payload: data });
     } catch (e) {}
 }
 
-function* logout() {
-    const state = yield select();
+function* logout(): Iterable<any> {
+    const state = (yield select()) as any;
     const form: any = document.createElement("FORM");
     const input: any = document.createElement("INPUT");
     input.name = "_token";

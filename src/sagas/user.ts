@@ -22,24 +22,27 @@ import {
 import client, { socket, io } from "@colab/client";
 import { UserSchema } from "../schemas";
 
-function* init() {
+function* init(): Iterable<any> {
     try {
-        const { data } = yield client.getAuth();
+        const { data } = (yield client.getAuth()) as any;
         yield put(putUser(data));
         yield put({ type: "SET_AUTH_ID", payload: data.id });
     } catch (e) {}
 }
 
-function* getPreferences() {
+function* getPreferences(): Iterable<any> {
     try {
-        const { data } = yield client.getPreferences();
+        const { data } = (yield client.getPreferences()) as any;
         yield put(patchPreferences(data));
     } catch (e) {}
 }
 
-function* preferences({ payload, meta }: UpdatePreferencesAction) {
+function* preferences({
+    payload,
+    meta,
+}: UpdatePreferencesAction): Iterable<any> {
     try {
-        const { data } = yield client.updatePreferences(payload);
+        const { data } = (yield client.updatePreferences(payload)) as any;
         yield put(patchPreferences(data));
         meta.success(data);
     } catch (e) {
@@ -47,9 +50,9 @@ function* preferences({ payload, meta }: UpdatePreferencesAction) {
     }
 }
 
-function* presence({ payload, meta }: SetUserPresenceAction) {
+function* presence({ payload, meta }: SetUserPresenceAction): Iterable<any> {
     try {
-        const { data } = yield client.setUserPresence(payload);
+        const { data } = (yield client.setUserPresence(payload)) as any;
         yield put(
             patchPresence({ user_id: payload.user_id, state: payload.presence })
         );
@@ -59,9 +62,9 @@ function* presence({ payload, meta }: SetUserPresenceAction) {
     }
 }
 
-function* update({ payload, meta }: UpdateUserProfileAction) {
+function* update({ payload, meta }: UpdateUserProfileAction): Iterable<any> {
     try {
-        const { data } = yield client.updateUserProfile(payload);
+        const { data } = (yield client.updateUserProfile(payload)) as any;
         yield put(patchUser(data));
         meta.success(data);
     } catch (e) {
@@ -69,7 +72,7 @@ function* update({ payload, meta }: UpdateUserProfileAction) {
     }
 }
 
-function* store({ payload }: any) {
+function* store({ payload }: any): Iterable<any> {
     if (Array.isArray(payload)) {
         yield put({ type: "PUT_USERS", payload });
     } else {
@@ -77,9 +80,9 @@ function* store({ payload }: any) {
     }
 }
 
-function* status({ payload, meta }: SetUserStatusAction) {
+function* status({ payload, meta }: SetUserStatusAction): Iterable<any> {
     try {
-        const { data } = yield client.setUserStatus(payload);
+        const { data } = (yield client.setUserStatus(payload)) as any;
         yield put(patchUser(data));
         meta.success(data);
     } catch (e) {
@@ -87,23 +90,23 @@ function* status({ payload, meta }: SetUserStatusAction) {
     }
 }
 
-function* patch({ type, payload }: any) {
+function* patch({ type, payload }: any): Iterable<any> {
     yield put({ type: "PATCH_USER", payload: payload });
 }
 
-function* get(action: any) {
+function* get(action: any): Iterable<any> {
     try {
     } catch (e) {}
 }
 
-function* related({ payload }: any) {
+function* related({ payload }: any): Iterable<any> {
     let users = Object.values(payload[UserSchema.collect] || {}) as io.User[];
     if (users.length > 0) {
         yield put(putUsers(users));
     }
 }
 
-function* subscribe({ payload }: any) {
+function* subscribe({ payload }: any): Iterable<any> {
     const topic = `user:${payload}`;
     const sub = (socket as any).channels.find((ch: any) => ch.topic == topic);
     if (!Boolean(sub)) {

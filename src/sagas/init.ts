@@ -1,27 +1,27 @@
 import { put, takeEvery } from "redux-saga/effects";
 import { socket } from "@colab/client";
 
-function* auth() {
+function* auth(): Iterable<any> {
     yield put({ type: "GET_CONFIG" });
 }
 
-function* workspaces() {
+function* workspaces(): Iterable<any> {
     yield put({ type: "FETCH_WORKSPACES" });
 }
 
-function* channels() {
+function* channels(): Iterable<any> {
     yield put({ type: "FETCH_CHANNELS" });
 }
 
-function* role() {
+function* role(): Iterable<any> {
     yield put({ type: "FETCH_ROLE" });
 }
 
-function* threads() {
+function* threads(): Iterable<any> {
     yield put({ type: "FETCH_THREADS" });
 }
 
-function* wsconn() {
+function* wsconn(): Iterable<any> {
     socket.connect();
 }
 

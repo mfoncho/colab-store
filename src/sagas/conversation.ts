@@ -19,11 +19,11 @@ import client from "@colab/client";
 import { storeRelated } from "../actions/app";
 import { State } from "..";
 
-function* init({ payload, meta }: InitConversationAction) {
+function* init({ payload, meta }: InitConversationAction): Iterable<any> {
     yield put(createConversation(payload));
 
     try {
-        const { data } = yield client.fetchMessages(payload);
+        const { data } = (yield client.fetchMessages(payload)) as any;
         const [normalized, related] = MessageSchema.normalizeMany(data);
         yield put(storeRelated(related));
         yield put(
@@ -45,8 +45,8 @@ function* init({ payload, meta }: InitConversationAction) {
     }
 }
 
-function* load({ payload, meta }: LoadConversationAction) {
-    const { threads } = (yield select()) as State;
+function* load({ payload, meta }: LoadConversationAction): Iterable<any> {
+    const { threads } = ((yield select()) as any) as State;
     const thread = threads.getThread(payload.thread_id);
     if (!thread) return;
 
