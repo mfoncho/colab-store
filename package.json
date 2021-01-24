@@ -27,7 +27,6 @@
     "dependencies": {
         "@colab/client": "git+https://github.com/mfoncho/colab-client",
         "@colab/types": "git+https://github.com/mfoncho/colab-types",
-        "@types/axios": "^0.14.0",
         "@types/immutable": "^3.8.7",
         "@types/lodash": "^4.14.168",
         "@types/moment": "^2.13.0",
