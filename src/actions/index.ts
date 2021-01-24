@@ -42,7 +42,10 @@ export function createAction<T = string, P = any>(
     return { type, payload };
 }
 
-export function createIOAction<S, T = string, P = any>(type: T, payload: P) {
+export function createIOAction<S, T = string, P = any>(
+    type: T,
+    payload: P
+): IOAction<T, P> {
     let error: (reason: any) => void = (error) => {};
 
     let success: (data: S) => void = (data) => {};
