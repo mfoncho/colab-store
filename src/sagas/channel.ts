@@ -252,7 +252,7 @@ export const tasks = [
 
     { effect: takeEvery, type: "STORE_CHANNEL", handler: store },
 
-    { effect: takeEvery, type: "FETCH_CHANNELS", handler: fetch },
+    //{ effect: takeEvery, type: "FETCH_CHANNELS", handler: fetch },
 
     { effect: takeEvery, type: CHANNEL_CREATED, handler: store },
 
