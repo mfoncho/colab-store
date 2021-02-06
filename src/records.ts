@@ -176,6 +176,7 @@ export class ChannelRecord
         timestamp: "",
         joined_at: "",
         is_board: false,
+        is_direct: false,
         is_private: false,
         is_archived: false,
         workspace_id: "0",
@@ -306,13 +307,14 @@ export class CategoryRecord
 export class WorkspaceRecord
     extends Record({
         id: "0",
-        name: "colab",
+        name: "",
         icon: "",
         role: new WorkspaceRoleRecord({ permissions: {} }),
         categories: List<CategoryRecord>(),
         timestamp: "",
         description: "",
         topic: "",
+        is_root: false,
         joined_at: "",
         membership_id: "",
         is_personal: false,
@@ -337,6 +339,10 @@ export class WorkspaceRecord
             data = { ...data, categories };
         }
         return data;
+    }
+
+    get isRoot() {
+        return this.is_root;
     }
 }
 
@@ -432,6 +438,10 @@ export class ThreadRecord
 
     static objectFromJS(data: any) {
         return data;
+    }
+
+    get isMain() {
+        return this.type == "main";
     }
 
     getStorePath(): [Id, Id] {

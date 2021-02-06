@@ -19,7 +19,17 @@ function* get(action: any): Iterable<any> {
     }
 }
 
-function* fetch({ type, payload }: any): Iterable<any> {
+function* init(): Iterable<any> {
+    yield put({
+        type: "PUT_WORKSPACE",
+        payload: {
+            name: "",
+            is_root: true,
+        },
+    });
+}
+
+function* fetch(): Iterable<any> {
     try {
         const { data } = (yield client.fetchWorkspaces()) as any;
 
@@ -60,7 +70,7 @@ function* destroy({ payload }: any): Iterable<any> {
     yield put({ type: "REMOVE_WORKSPACE", payload: payload.id });
 }
 
-function* init({ payload }: any): Iterable<any> {
+function* initialize({ payload }: any): Iterable<any> {
     yield put({ type: "STORE_WORKSPACE", payload });
 }
 
@@ -89,7 +99,9 @@ function* workspaceMemberUpdated({ payload }: any): Iterable<any> {
 }
 
 export const tasks = [
-    { effect: takeEvery, type: "INIT_WORKSPACE", handler: init },
+    { effect: takeEvery, type: "@@INIT", handler: init },
+
+    { effect: takeEvery, type: "INIT_WORKSPACE", handler: initialize },
 
     { effect: takeEvery, type: "STORE_WORKSPACE", handler: serialize },
 

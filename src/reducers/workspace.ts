@@ -3,7 +3,7 @@ import { WorkspaceRecord } from "../records";
 
 export type WorkspacesState = Map<string, WorkspaceRecord>;
 
-export const state = Map<string, WorkspaceRecord>();
+const state: WorkspacesState = Map();
 
 function PUT_WORKSPACE(state: WorkspacesState, { payload }: any) {
     if (state.has(payload.id)) {
