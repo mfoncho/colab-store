@@ -1,6 +1,7 @@
 import { put, takeEvery, takeLatest, select } from "redux-saga/effects";
 import { State } from "..";
 import client from "@colab/client";
+import { putWorkspace } from "../actions/workspace";
 
 function* get(action: any): Iterable<any> {
     const { payload } = action;
@@ -20,13 +21,8 @@ function* get(action: any): Iterable<any> {
 }
 
 function* init(): Iterable<any> {
-    yield put({
-        type: "PUT_WORKSPACE",
-        payload: {
-            name: "",
-            is_root: true,
-        },
-    });
+    console.log("init");
+    yield put(putWorkspace({ is_root: true, name: "" } as any));
 }
 
 function* fetch(): Iterable<any> {
