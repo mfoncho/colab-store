@@ -281,7 +281,6 @@ export class WorkspaceRecord
         is_root: false,
         joined_at: "",
         membership_id: "",
-        is_personal: false,
     })
     implements Unique {
     constructor(props: any) {

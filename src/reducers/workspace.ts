@@ -7,7 +7,10 @@ export type WorkspacesState = Map<string, WorkspaceRecord>;
 const state: WorkspacesState = Map();
 
 function init(state: WorkspacesState, payload: any) {
-    const root = new WorkspaceRecord({ is_root: true });
+    const root = new WorkspaceRecord({
+        id: "root",
+        is_root: true,
+    });
     return state.set(root.id, root);
 }
 
