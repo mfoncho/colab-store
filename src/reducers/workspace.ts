@@ -6,14 +6,6 @@ export type WorkspacesState = Map<string, WorkspaceRecord>;
 
 const state: WorkspacesState = Map();
 
-function init(state: WorkspacesState, payload: any) {
-    const root = new WorkspaceRecord({
-        id: "root",
-        is_root: true,
-    });
-    return state.set(root.id, root);
-}
-
 function PUT_WORKSPACE(state: WorkspacesState, { payload }: any) {
     if (state.has(payload.id)) {
         return PATCH_WORKSPACE(state, { payload });
@@ -60,8 +52,6 @@ function REMOVE_WORKSPACE(
 }
 
 export const reducers = {
-    [STORE_INIT]: init,
-
     PUT_WORKSPACE,
 
     PUT_WORKSPACES,
