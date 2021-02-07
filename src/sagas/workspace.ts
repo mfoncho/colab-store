@@ -21,7 +21,6 @@ function* get(action: any): Iterable<any> {
 }
 
 function* init(): Iterable<any> {
-    console.log("init");
     yield put(putWorkspace({ is_root: true, name: "" } as any));
 }
 

@@ -1,9 +1,15 @@
 import { Map } from "immutable";
+import { STORE_INIT } from "../actions/types";
 import { WorkspaceRecord } from "../records";
 
 export type WorkspacesState = Map<string, WorkspaceRecord>;
 
 const state: WorkspacesState = Map();
+
+function init(state: WorkspacesState, payload: any) {
+    const root = new WorkspaceRecord({ is_root: true });
+    return state.set(root.id, root);
+}
 
 function PUT_WORKSPACE(state: WorkspacesState, { payload }: any) {
     if (state.has(payload.id)) {
@@ -51,6 +57,8 @@ function REMOVE_WORKSPACE(
 }
 
 export const reducers = {
+    [STORE_INIT]: init,
+
     PUT_WORKSPACE,
 
     PUT_WORKSPACES,

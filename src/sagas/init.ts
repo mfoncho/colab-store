@@ -1,4 +1,5 @@
 import { put, takeEvery } from "redux-saga/effects";
+import { INIT } from "../actions/types";
 import { socket } from "@colab/client";
 
 function* auth(): Iterable<any> {
@@ -26,15 +27,15 @@ function* wsconn(): Iterable<any> {
 }
 
 export const tasks = [
-    { effect: takeEvery, type: "PLUME_INIT", handler: auth },
+    { effect: takeEvery, type: INIT, handler: auth },
 
-    { effect: takeEvery, type: "PLUME_INIT", handler: role },
+    { effect: takeEvery, type: INIT, handler: role },
 
-    { effect: takeEvery, type: "PLUME_INIT", handler: workspaces },
+    { effect: takeEvery, type: INIT, handler: workspaces },
 
-    { effect: takeEvery, type: "PLUME_INIT", handler: wsconn },
+    { effect: takeEvery, type: INIT, handler: wsconn },
 
-    { effect: takeEvery, type: "PLUME_INIT", handler: channels },
+    { effect: takeEvery, type: INIT, handler: channels },
 
-    { effect: takeEvery, type: "PLUME_INIT", handler: threads },
+    { effect: takeEvery, type: INIT, handler: threads },
 ];

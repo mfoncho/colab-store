@@ -11,40 +11,6 @@ import {
 } from "@colab/client";
 import { io } from "@colab/client";
 
-const admin = "/a";
-const adminWorkspaces = `${admin}/workspaces`;
-const adminChannels = `${admin}/channels`;
-const adminWorkspace = `${adminWorkspaces}/:workspace_id`;
-const adminChannel = `${adminChannels}/:channel_id`;
-
-const workspace = "/workspace/:workspace_id";
-const channelPath = `/channels/:channel_id`;
-const boardPath = `${channelPath}/board`;
-const cardPath = `${boardPath}/:card_id`;
-const threadPath = `${channelPath}/topics/:thread_id`;
-
-export const adminPaths = {
-    admin,
-    adminWorkspaces,
-    adminChannels,
-    adminWorkspace,
-    adminChannel,
-};
-
-export const workspacePaths = {
-    workspace: workspace,
-    channel: channelPath,
-    board: boardPath,
-    card: cardPath,
-    thread: threadPath,
-    message: `${channelPath}/message/:message_id`,
-};
-
-export const paths = Record({
-    ...workspacePaths,
-    ...adminPaths,
-})();
-
 export class PreferencesRecord extends Record<io.Preferences>({
     theme: "",
     locale: "",
@@ -59,8 +25,6 @@ export class Presence extends Record({
     state: "offline" as io.PresenceState,
     timestamp: "0",
 }) {}
-
-export class App extends Record({ paths }) {}
 
 export class StatusRecord extends Record({
     id: "0",
@@ -339,10 +303,6 @@ export class WorkspaceRecord
             data = { ...data, categories };
         }
         return data;
-    }
-
-    get isRoot() {
-        return this.is_root;
     }
 }
 

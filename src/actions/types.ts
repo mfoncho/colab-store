@@ -1,3 +1,6 @@
+export const STORE_INIT = "@@INIT";
+export type STORE_INIT = typeof STORE_INIT;
+
 export const INIT = "COLAB_INIT";
 export type INIT = typeof INIT;
 

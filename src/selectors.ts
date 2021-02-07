@@ -16,10 +16,6 @@ export function users({ users }: State) {
     return users;
 }
 
-export function paths({ app }: State) {
-    return app.paths;
-}
-
 export function statuses({ status }: State) {
     return status;
 }
@@ -86,7 +82,6 @@ export default {
     auth,
     users,
     roles,
-    paths,
     cards,
     threads,
     columns,

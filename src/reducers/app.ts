@@ -1,14 +1,16 @@
 import { Record } from "immutable";
-import { App } from "../records";
+import { STORE_INIT } from "../actions/types";
 
-function PUT_APP_CONFIG(state: App, action: any) {
+export class AppState extends Record({}) {}
+
+function init(state: AppState, action: any) {
     return state;
 }
 
-const state = new App();
+const state = new AppState();
 
 const reducers = {
-    PUT_APP_CONFIG,
+    [STORE_INIT]: init,
 };
 
 export default { state, reducers };
