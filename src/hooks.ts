@@ -36,6 +36,19 @@ export function usePreferences() {
     return useSelector(selector.preferences);
 }
 
+export function useTopics(id: string) {
+    const selector = useCallback(
+        ({ threads }: State) => {
+            const ths = threads.entities.get(id);
+            if (ths) {
+                return ths.get("main");
+            }
+        },
+        [id]
+    );
+    return useSelector(selector);
+}
+
 export function usePresence(id?: string) {
     const selector = useCallback(
         ({ presence, auth }: State) => {
@@ -83,10 +96,6 @@ export function useMembers(id?: string) {
     return useSelector(select);
 }
 
-export function useMainThread() {
-    return useSelector(selector.mainthread);
-}
-
 export function useRoles(id?: string) {
     const select = useCallback(
         id
@@ -102,12 +111,9 @@ export function useRoles(id?: string) {
 export function useThreadProp(id: string, prop: string) {
     const selector = useCallback(
         ({ threads }: State) => {
-            const cid = threads.paths.get(id);
-            if (cid != null) {
-                const thread = threads.entities.getIn([
-                    cid,
-                    id,
-                ]) as ThreadRecord;
+            const path = threads.paths.get(id);
+            if (path != null) {
+                const thread = threads.entities.getIn(path) as ThreadRecord;
                 if (thread) {
                     return thread.get(prop as any);
                 }
@@ -121,9 +127,9 @@ export function useThreadProp(id: string, prop: string) {
 export function useThread(id: string, prop?: string) {
     const selector = useCallback(
         ({ threads }: State) => {
-            const cid = threads.paths.get(id);
-            if (cid != null) {
-                return threads.entities.getIn([cid, id]) as ThreadRecord;
+            const path = threads.paths.get(id);
+            if (path != null) {
+                return threads.entities.getIn(path) as ThreadRecord;
             }
         },
         [id]

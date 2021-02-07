@@ -40,11 +40,13 @@ const sort = (a: Timestamped & Unique, b: Timestamped & Unique) => {
     return 0;
 };
 
+type ThreadType = "topic" | "main" | "card";
+
 export class ThreadsState extends Record(
     {
-        paths: Map<Id, Id>(),
+        paths: Map<Id, [Id, ThreadType, Id]>(),
         mpaths: Map<Id, Id>(),
-        entities: Map<Id, Map<Id, ThreadRecord>>(),
+        entities: Map<Id, Map<ThreadType, Map<Id, ThreadRecord>>>(),
         messages: Map<Id, MessageRecord>(),
     },
     "threads"
@@ -62,17 +64,17 @@ export class ThreadsState extends Record(
     }
 
     getThreadPath(id: string) {
-        const cid = this.paths.get(id);
-        if (cid == null) return;
-        return ["entities", cid, id];
+        const path = this.paths.get(id);
+        if (path == null) return;
+        return ["entities", ...path];
     }
 
     getMessagePath(id: string) {
         const tid = this.mpaths.get(id);
         if (tid == null) return;
-        const cid = this.paths.get(tid);
-        if (cid == null) return;
-        return ["entities", cid, tid, "messages", id];
+        const path = this.paths.get(tid);
+        if (path == null) return;
+        return ["entities", ...path, "messages", id];
     }
 
     getMessage(id: string): MessageRecord | undefined {
@@ -91,8 +93,8 @@ export class ThreadsState extends Record(
 
     deleteThread({ id }: { id: string }) {
         if (this.hasThread(id)) {
-            const cid = this.paths.get(id);
-            const path = ["entities", cid, id];
+            const tpath = this.paths.get(id)!;
+            const path = ["entities", ...tpath];
             const messages = this.getIn([...path, "messages"]) as Map<
                 string,
                 MessageRecord
@@ -159,8 +161,9 @@ export class ThreadsState extends Record(
         if (prev) {
             thread = prev.merge(thread);
         }
-        return this.setIn(["paths", thread.id], thread.channel_id).setIn(
-            ["entities", thread.channel_id, thread.id],
+        const path = [thread.channel_id, thread.type, thread.id];
+        return this.setIn(["paths", thread.id], path).setIn(
+            ["entities", ...path],
             thread
         );
     }
@@ -196,11 +199,13 @@ export const reducers = {
         return state.withMutations((state) => {
             const threads = state.entities.get(payload.id);
             if (threads) {
-                threads.forEach((thread) => {
-                    thread.messages.forEach((message) => {
-                        state.deleteIn(["mpaths", message.id]);
+                threads.forEach((type) => {
+                    type.forEach((thread) => {
+                        thread.messages.forEach((message) => {
+                            state.deleteIn(["mpaths", message.id]);
+                        });
+                        state.deleteIn(["paths", thread.id]);
                     });
-                    state.deleteIn(["paths", thread.id]);
                 });
             }
             state.deleteIn(["entities", payload.id]);

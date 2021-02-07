@@ -71,12 +71,6 @@ export function threads({ threads, route }: State) {
     return threads.entities.get(route.params.get("channel_id"));
 }
 
-export function mainthread({ threads, route }: State) {
-    return threads.entities
-        .get(route.params.get("channel_id"))
-        ?.find((thread) => thread.type == "main");
-}
-
 export default {
     org,
     auth,
@@ -91,7 +85,6 @@ export default {
     channels,
     workspace,
     checklists,
-    mainthread,
     workspaces,
     preferences,
 };
