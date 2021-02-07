@@ -1,8 +1,8 @@
+export * from "./actions/types";
+export * from  "./hooks";
 import { applyMiddleware, compose, createStore } from "redux";
 import createSagaMiddleware from "redux-saga";
-
 import sagas from "./sagas";
-export * from  './hooks';
 import reducers, { RootState } from "./reducers";
 
 export type State = typeof RootState;
