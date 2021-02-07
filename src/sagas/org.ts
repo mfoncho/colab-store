@@ -1,5 +1,5 @@
 import { put, select, takeEvery } from "redux-saga/effects";
-import { State } from "..";
+import { State, INIT } from "..";
 import client from "@colab/client";
 
 function* get(action: any): Iterable<any> {
@@ -9,4 +9,4 @@ function* get(action: any): Iterable<any> {
     } catch (e) {}
 }
 
-export const tasks = [{ effect: takeEvery, type: "PLUME_INIT", handler: get }];
+export const tasks = [{ effect: takeEvery, type: INIT, handler: get }];

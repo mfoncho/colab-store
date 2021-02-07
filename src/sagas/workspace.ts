@@ -20,10 +20,6 @@ function* get(action: any): Iterable<any> {
     }
 }
 
-function* init(): Iterable<any> {
-    yield put(putWorkspace({ is_root: true, name: "" } as any));
-}
-
 function* fetch(): Iterable<any> {
     try {
         const { data } = (yield client.fetchWorkspaces()) as any;
@@ -94,8 +90,6 @@ function* workspaceMemberUpdated({ payload }: any): Iterable<any> {
 }
 
 export const tasks = [
-    { effect: takeEvery, type: "@@INIT", handler: init },
-
     { effect: takeEvery, type: "INIT_WORKSPACE", handler: initialize },
 
     { effect: takeEvery, type: "STORE_WORKSPACE", handler: serialize },

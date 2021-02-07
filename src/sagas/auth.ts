@@ -1,5 +1,5 @@
 import { put, takeEvery } from "redux-saga/effects";
-import { dispatch } from "..";
+import { dispatch, INIT } from "..";
 import { io, socket, Presence } from "@colab/client";
 import { patchPresence, putPresence, removePresence } from "../actions/user";
 
@@ -32,4 +32,4 @@ function* init(): Iterable<any> {
         .receive("error", () => {});
 }
 
-export const tasks = [{ effect: takeEvery, type: "PLUME_INIT", handler: init }];
+export const tasks = [{ effect: takeEvery, type: INIT, handler: init }];

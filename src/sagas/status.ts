@@ -1,6 +1,6 @@
 import { put, takeEvery } from "redux-saga/effects";
 import client from "@colab/client";
-import { LOAD_STATUSES } from "../actions/types";
+import { LOAD_STATUSES, INIT } from "../actions/types";
 import {
     putStatuses,
     loadStatuses,
@@ -22,6 +22,6 @@ function* load({ meta }: LoadStatusesAction): Iterable<any> {
 }
 
 export const tasks = [
-    { effect: takeEvery, type: "PLUME_INIT", handler: init },
+    { effect: takeEvery, type: INIT, handler: init },
     { effect: takeEvery, type: LOAD_STATUSES, handler: load },
 ];

@@ -28,6 +28,7 @@ import {
     putChannels,
 } from "../actions/channel";
 import {
+    INIT,
     JOIN_CHANNEL,
     ARCHIVE_CHANNEL,
     UNARCHIVE_CHANNEL,
@@ -232,7 +233,7 @@ function* store({
 }
 
 export const tasks = [
-    { effect: takeEvery, type: "PLUME_INIT", handler: init },
+    { effect: takeEvery, type: INIT, handler: init },
 
     { effect: takeEvery, type: CLEAR_CHANNEL, handler: clear },
 

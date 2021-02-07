@@ -1,6 +1,7 @@
 import { put, takeEvery } from "redux-saga/effects";
 import { dispatch } from "..";
 import {
+    INIT,
     PUT_USERS,
     STORE_RELATED,
     SET_USER_STATUS,
@@ -122,8 +123,8 @@ function* subscribe({ payload }: any): Iterable<any> {
 }
 
 export const tasks = [
-    { effect: takeEvery, type: "PLUME_INIT", handler: getPreferences },
-    { effect: takeEvery, type: "PLUME_INIT", handler: init },
+    { effect: takeEvery, type: INIT, handler: getPreferences },
+    { effect: takeEvery, type: INIT, handler: init },
     { effect: takeEvery, type: STORE_RELATED, handler: related },
     { effect: takeEvery, type: SET_USER_STATUS, handler: status },
     { effect: takeEvery, type: SET_USER_PRESENCE, handler: presence },
