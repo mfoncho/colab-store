@@ -1,6 +1,7 @@
-import { put, select, takeEvery } from "redux-saga/effects";
+import { put, takeEvery } from "redux-saga/effects";
 import Client, { io, socket } from "@colab/client";
 import { dispatch } from "..";
+import { UserChannelSchema as Schema } from "../schemas";
 import { roleUpdated, roleCreated, roleDeleted } from "../actions/channelRole";
 import {
     tagDeleted,
@@ -45,18 +46,23 @@ import {
 } from "../actions/types";
 import { memberUpdated, memberJoined, memberLeft } from "../actions/member";
 import { loadTopics } from "../actions/thread";
+import { storeRelated } from "../actions/app";
 
 function* init(): Iterable<any> {
     try {
         const { data } = (yield Client.fetchChannels({})) as any;
-        yield put(putChannels(data));
+        const [normalized, related] = Schema.normalizeMany(data);
+        yield put(storeRelated(related));
+        yield put(putChannels(normalized));
     } catch (e) {}
 }
 
 function* archive({ payload, meta }: ArchiveChannelAction): Iterable<any> {
     try {
         const { data } = (yield Client.archiveChannel(payload)) as any;
-        yield put(channelArchived(data));
+        const [normalized, related] = Schema.normalizeOne(data);
+        yield put(storeRelated(related));
+        yield put(channelArchived(normalized as any));
         meta.success(data);
     } catch (e) {
         meta.error(e.toString());
@@ -66,7 +72,9 @@ function* archive({ payload, meta }: ArchiveChannelAction): Iterable<any> {
 function* unarchive({ payload, meta }: UnarchiveChannelAction): Iterable<any> {
     try {
         const { data } = (yield Client.unarchiveChannel(payload)) as any;
-        yield put(channelUnarchived(data));
+        const [normalized, related] = Schema.normalizeOne(data);
+        yield put(storeRelated(related));
+        yield put(channelUnarchived(normalized as any));
         meta.success(data);
     } catch (e) {
         meta.error(e.toString());
@@ -76,44 +84,12 @@ function* unarchive({ payload, meta }: UnarchiveChannelAction): Iterable<any> {
 function* load({ payload, meta }: LoadChannelAction): Iterable<any> {
     try {
         const { data } = (yield Client.getChannel(payload)) as any;
-        yield put(putChannel(data));
+        const [normalized, related] = Schema.normalizeOne(data);
+        yield put(storeRelated(related));
+        yield put(putChannel(normalized as any));
         meta.success(data);
     } catch (e) {
         meta.error(e.toString());
-    }
-}
-
-function* fetch(action: any): Iterable<any> {
-    const { type, payload } = action;
-    try {
-        let path = null;
-
-        switch (type) {
-            case "FETCH_CHANNELS":
-                path = `/channels`;
-                break;
-
-            case "FETCH_WORKSPACE_CHANNELS":
-                if (payload.workspace) {
-                    path = `/workspaces/${payload.workspace_id}/channels`;
-                }
-                if (payload.archived) {
-                    path = `${path}?archived`;
-                }
-                break;
-        }
-
-        if (path) {
-            let { data, status } = (yield Client.fetchChannels(payload)) as any;
-
-            if (status === 200 && data.length > 0) {
-                for (let channel of data) {
-                    yield put({ type: "STORE_CHANNEL", payload: channel });
-                }
-            }
-        }
-    } catch (e) {
-        console.info(e);
     }
 }
 
@@ -228,8 +204,10 @@ function* clear({ payload }: ClearChannelAction): Iterable<any> {
 function* store({
     payload,
 }: ChannelCreatedAction | ChannelJoinedAction): Iterable<any> {
+    const [normalized, related] = Schema.normalizeOne(payload as any);
     yield put(loadTopics({ channel_id: payload.id }));
-    yield put(putChannel(payload));
+    yield put(storeRelated(related));
+    yield put(putChannel(normalized));
 }
 
 export const tasks = [
