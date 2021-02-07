@@ -63,7 +63,9 @@ const MembershipStruct = {
     user: user,
 };
 
-const ChannelStruct = {};
+const ChannelStruct = {
+    users: users,
+};
 
 const WorkspaceStruct = {};
 

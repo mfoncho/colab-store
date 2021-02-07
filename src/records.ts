@@ -135,6 +135,7 @@ export class ChannelRecord
         purpose: "",
         admin_id: "0" as Id,
         member_id: "0" as Id,
+        users: List<string>(),
         tags: List<TagRecord>(),
         permissions: new ChannelPermissions({}),
         timestamp: "",
