@@ -59,6 +59,10 @@ export function channel({ channels, route }: State) {
     }
 }
 
+export function directChannels({ channels }: State) {
+    return channels.entities.get("root");
+}
+
 export function channels({ channels }: State) {
     return channels.entities;
 }
@@ -87,4 +91,5 @@ export default {
     checklists,
     workspaces,
     preferences,
+    directChannels,
 };

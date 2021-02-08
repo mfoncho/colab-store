@@ -307,6 +307,15 @@ export function useChannels() {
     return useSelector(selector.channels);
 }
 
+export function useDirectChannels() {
+    const channels = useSelector(selector.directChannels);
+    if (channels) {
+        return channels;
+    } else {
+        return defaultChannels;
+    }
+}
+
 export function useColumns(id?: string) {
     const selector = useCallback(
         ({ columns, route }: State) => {
