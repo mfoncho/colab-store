@@ -12,6 +12,7 @@ import {
     TagRecord,
     ThreadRecord,
     UserRecord,
+    ChannelRecord,
     ChannelRoleRecord,
     MemberRecord,
 } from "./records";
@@ -25,6 +26,8 @@ const defaultList = List();
 const defaultUser = new UserRecord();
 
 const defaultPresence = new Presence();
+
+const defaultChannels = Map<string, ChannelRecord>();
 
 const defaultMembers = OrderedMap<string, MemberRecord>();
 
@@ -289,18 +292,19 @@ export function useChannel(id?: string) {
     return useSelector(select);
 }
 
-export function useChannels() {
-    return useSelector(selector.channels);
-}
-
-export function useWorkspaceChannels<T = never>(id: string, defaultValue?: T) {
-    const selector = useCallback(
+export function useWorkspaceChannels(id: string) {
+    const select = useCallback(
         ({ channels }: State) => {
-            return channels.entities.get(id);
+            return channels.entities.get(id, defaultChannels);
         },
+
         [id]
     );
-    return useSelector(selector) ?? defaultValue;
+    return useSelector(select);
+}
+
+export function useChannels() {
+    return useSelector(selector.channels);
 }
 
 export function useColumns(id?: string) {
