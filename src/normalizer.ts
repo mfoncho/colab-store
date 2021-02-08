@@ -29,7 +29,7 @@ class Schemas {
 export interface Relation<T = undefined, Ts = never> {
     ts?: Ts;
     as?: T;
-    by: "belongsto" | "hasone" | "hasmany" | "mapmany";
+    by: "belongsto" | "hasone" | "hasmany" | "mapmany" | "belongstomany";
     type: string;
 }
 
@@ -134,6 +134,10 @@ export class Schema<
         return { as, type, by: "belongsto" };
     }
 
+    static belongsToMany<T>(type: string, as?: T): Relation<T> {
+        return { as, type, by: "belongstomany" };
+    }
+
     static mapMany<T>(type: string, as?: T): Relation<T> {
         return { as, type, by: "mapmany" };
     }
@@ -173,6 +177,32 @@ export class Schema<
                             }
                             break;
 
+                        case "belongstomany":
+                            {
+                                object = Array.isArray(object)
+                                    ? object
+                                    : Object.values(object);
+
+                                let [
+                                    subnormalized,
+                                    subrelations,
+                                ] = schema.normalizeMany(object) as [
+                                    [any],
+                                    any
+                                ];
+
+                                let keys = subnormalized.map((subnorm) => {
+                                    const id = schema.identify(subnorm);
+                                    relation = merge(relation, {
+                                        [id]: subnorm,
+                                    });
+                                    return id;
+                                });
+                                normalized[key] = keys;
+                                acc = merge(acc, subrelations);
+                            }
+                            break;
+
                         case "belongsto":
                             {
                                 let ref = related.as
@@ -184,17 +214,10 @@ export class Schema<
                                     subrelations,
                                 ] = schema.normalize(object) as [any, any];
 
-                                if (Array.isArray(subnormalized)) {
-                                    let keys = subnormalized.map((subnorm) =>
-                                        schema.identify(subnorm)
-                                    );
-                                    normalized[key] = keys;
-                                } else {
-                                    let identity = schema.identify(object);
-                                    normalized[ref] = identity;
-                                    relation[identity] = subnormalized;
-                                    delete normalized[key];
-                                }
+                                let identity = schema.identify(object);
+                                normalized[ref] = identity;
+                                relation[identity] = subnormalized;
+                                delete normalized[key];
 
                                 acc = merge(acc, subrelations);
                             }

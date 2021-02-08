@@ -19,7 +19,7 @@ const reactions: Relation<"reactions", string> = Schema.mapMany(
     "reactions"
 );
 
-const users: Relation<"id", string> = Schema.belongsTo("user", "id");
+const users: Relation<"users", string> = Schema.belongsToMany("user", "users");
 
 const UsersReactionStruct = {
     users: users,
@@ -63,13 +63,11 @@ const MembershipStruct = {
     user: user,
 };
 
-const ChannelStruct = {
-    users: users,
-};
-
 const WorkspaceStruct = {};
 
-const UserChannelStruct = {};
+const UserChannelStruct = {
+    users: users,
+};
 
 const UserWorkspaceStruct = {};
 
@@ -101,7 +99,7 @@ export const UserChannelSchema = Schema.create<
     io.UserChannel,
     typeof UserChannelStruct,
     "channels"
->(ChannelStruct, "channel", "channels");
+>(UserChannelStruct, "channel", "channels");
 
 export const UserWorkspaceSchema = Schema.create<
     io.UserWorkspace,
@@ -187,15 +185,17 @@ export type NormalizedMessage = ReturnType<
     typeof MessageSchema["normalizeOne"]
 >[0];
 
+export type RelatedRecord<T> = Record<string, T>;
+
 export type NormalizedRelated = {
-    [UserSchema.collect]?: typeof UserSchema;
-    [CardSchema.collect]?: typeof CardSchema;
-    [ColumnSchema.collect]?: typeof ColumnSchema;
-    [ThreadSchema.collect]?: typeof ThreadSchema;
-    [MessageSchema.collect]?: typeof MessageSchema;
-    [ChecklistSchema.collect]?: typeof ChecklistSchema;
-    [UserChannelSchema.collect]?: typeof UserChannelSchema;
-    [UserWorkspaceSchema.collect]?: typeof UserWorkspaceSchema;
-    [MemberSchema.collect]?: typeof MemberSchema;
-    [MembershipSchema.collect]?: typeof MembershipSchema;
+    [UserSchema.collect]?: RelatedRecord<NormalizedUser>;
+    [CardSchema.collect]?: RelatedRecord<NormalizedCard>;
+    [ColumnSchema.collect]?: RelatedRecord<NormalizedColumn>;
+    [ThreadSchema.collect]?: RelatedRecord<NormalizedThread>;
+    [MessageSchema.collect]?: RelatedRecord<NormalizedUserChannel>;
+    [ChecklistSchema.collect]?: RelatedRecord<NormalizedChecklist>;
+    [UserChannelSchema.collect]?: RelatedRecord<NormalizedUserChannel>;
+    [MemberSchema.collect]?: RelatedRecord<NormalizedMember>;
+    [UserWorkspaceSchema.collect]?: RelatedRecord<NormalizedUserWorkspace>;
+    [MembershipSchema.collect]?: RelatedRecord<NormalizedMembership>;
 };
