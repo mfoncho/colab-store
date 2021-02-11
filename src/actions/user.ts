@@ -35,7 +35,6 @@ export interface UpdateUserProfilePayload {
 }
 
 export interface SetUserStatusPayload {
-    user_id: string;
     status_id: string;
 }
 
@@ -56,7 +55,6 @@ export interface RemovePresencePayload {
 }
 
 export interface SetUserPresencePayload {
-    user_id: string;
     presence: io.PresenceState;
 }
 

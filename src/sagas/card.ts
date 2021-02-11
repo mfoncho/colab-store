@@ -21,6 +21,7 @@ import {
     ARCHIVE_CARD,
     UNARCHIVE_CARD,
     MARK_CARD_AS_DONE,
+    MARK_CARD_AS_UNDONE,
     UPDATE_CARD,
     TAG_CARD,
     STORE_CARD,
@@ -281,7 +282,17 @@ function* archive({ payload, meta }: ArchiveCardAction): Iterable<any> {
 
 function* done({ payload, meta }: MarkCardAsDoneAction): Iterable<any> {
     try {
-        const { data } = (yield Client.markAsDone(payload)) as any;
+        const { data } = (yield Client.markCardAsDone(payload)) as any;
+        yield put(cardUpdated(data));
+        meta.success(data);
+    } catch (e) {
+        meta.error(e.toString());
+    }
+}
+
+function* undone({ payload, meta }: MarkCardAsDoneAction): Iterable<any> {
+    try {
+        const { data } = (yield Client.markCardAsUndone(payload)) as any;
         yield put(cardUpdated(data));
         meta.success(data);
     } catch (e) {
@@ -343,6 +354,8 @@ export const tasks = [
     { effect: takeEvery, type: DELETE_CARD, handler: trash },
 
     { effect: takeEvery, type: MARK_CARD_AS_DONE, handler: done },
+
+    { effect: takeEvery, type: MARK_CARD_AS_UNDONE, handler: undone },
 
     { effect: takeEvery, type: UNARCHIVE_CARD, handler: unarchive },
 

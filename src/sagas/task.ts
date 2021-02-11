@@ -12,9 +12,13 @@ import {
     taskUpdated,
     TaskUpdatedAction,
     UpdateTaskAction,
+    CompleteTaskAction,
+    UncompleteTaskAction,
 } from "../actions/board";
 import {
     CREATE_TASK,
+    COMPLETE_TASK,
+    UNCOMPLETE_TASK,
     DELETE_TASK,
     TASK_CREATED,
     TASK_DELETED,
@@ -36,6 +40,26 @@ function* create({ payload, meta }: CreateTaskAction): Iterable<any> {
 function* update({ payload, meta }: UpdateTaskAction): Iterable<any> {
     try {
         const { data } = (yield Client.updateTask(payload)) as any;
+        yield put(taskUpdated(data));
+        meta.success(data);
+    } catch (e) {
+        meta.error(e.toString());
+    }
+}
+
+function* complete({ payload, meta }: CompleteTaskAction): Iterable<any> {
+    try {
+        const { data } = (yield Client.completeTask(payload)) as any;
+        yield put(taskUpdated(data));
+        meta.success(data);
+    } catch (e) {
+        meta.error(e.toString());
+    }
+}
+
+function* uncomplete({ payload, meta }: UncompleteTaskAction): Iterable<any> {
+    try {
+        const { data } = (yield Client.uncompleteTask(payload)) as any;
         yield put(taskUpdated(data));
         meta.success(data);
     } catch (e) {
@@ -66,6 +90,8 @@ function* remove({ payload }: TaskDeletedAction): Iterable<any> {
 }
 
 export const tasks = [
+    { effect: takeEvery, type: COMPLETE_TASK, handler: complete },
+    { effect: takeEvery, type: UNCOMPLETE_TASK, handler: uncomplete },
     { effect: takeEvery, type: CREATE_TASK, handler: create },
     { effect: takeEvery, type: UPDATE_TASK, handler: update },
     { effect: takeEvery, type: DELETE_TASK, handler: trash },

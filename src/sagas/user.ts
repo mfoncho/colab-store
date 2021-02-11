@@ -1,8 +1,8 @@
-import { put, takeEvery } from "redux-saga/effects";
+import { put, takeEvery, select } from "redux-saga/effects";
 import { dispatch } from "..";
 import {
     INIT,
-    PUT_USERS,
+    USER_UPDATED,
     STORE_RELATED,
     SET_USER_STATUS,
     SET_USER_PRESENCE,
@@ -15,6 +15,7 @@ import {
     putUsers,
     patchPreferences,
     patchPresence,
+    UserUpdatedAction,
     SetUserStatusAction,
     SetUserPresenceAction,
     UpdateUserProfileAction,
@@ -22,6 +23,8 @@ import {
 } from "../actions/user";
 import client, { socket, io } from "@colab/client";
 import { UserSchema } from "../schemas";
+import { State } from "..";
+import { storeRelated } from "../actions/app";
 
 function* init(): Iterable<any> {
     try {
@@ -53,10 +56,9 @@ function* preferences({
 
 function* presence({ payload, meta }: SetUserPresenceAction): Iterable<any> {
     try {
+        const { auth } = ((yield select()) as any) as State;
         const { data } = (yield client.setUserPresence(payload)) as any;
-        yield put(
-            patchPresence({ user_id: payload.user_id, state: payload.presence })
-        );
+        yield put(patchPresence({ user_id: auth.id, state: payload.presence }));
         meta.success(data);
     } catch (e) {
         meta.error(e);
@@ -91,13 +93,10 @@ function* status({ payload, meta }: SetUserStatusAction): Iterable<any> {
     }
 }
 
-function* patch({ type, payload }: any): Iterable<any> {
-    yield put({ type: "PATCH_USER", payload: payload });
-}
-
-function* get(action: any): Iterable<any> {
-    try {
-    } catch (e) {}
+function* patch({ payload }: UserUpdatedAction): Iterable<any> {
+    const [normalized, related] = UserSchema.normalizeOne(payload);
+    yield put(storeRelated(related));
+    yield put(patchUser(normalized as any));
 }
 
 function* related({ payload }: any): Iterable<any> {
@@ -131,8 +130,7 @@ export const tasks = [
     { effect: takeEvery, type: UPDATE_USER_PROFILE, handler: update },
     { effect: takeEvery, type: UPDATE_PREFERENCES, handler: preferences },
     { effect: takeEvery, type: "SET_AUTH_ID", handler: subscribe },
-    { effect: takeEvery, type: "GET_USER", handler: get },
     { effect: takeEvery, type: "STORE_USER", handler: store },
     { effect: takeEvery, type: "STORE_USERS", handler: store },
-    { effect: takeEvery, type: "USER_UPDATED", handler: patch },
+    { effect: takeEvery, type: USER_UPDATED, handler: patch },
 ];

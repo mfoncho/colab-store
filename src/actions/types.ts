@@ -437,6 +437,9 @@ export type CARD_DONE = typeof CARD_DONE;
 export const MARK_CARD_AS_DONE = "MARK_CARD_AS_DONE";
 export type MARK_CARD_AS_DONE = typeof MARK_CARD_AS_DONE;
 
+export const MARK_CARD_AS_UNDONE = "MARK_CARD_AS_UNDONE";
+export type MARK_CARD_AS_UNDONE = typeof MARK_CARD_AS_UNDONE;
+
 export const CARD_UNARCHIVED = "CARD_UNARCHIVED";
 export type CARD_UNARCHIVED = typeof CARD_UNARCHIVED;
 
@@ -507,6 +510,12 @@ export type PATCH_TASKS = typeof PATCH_TASKS;
 
 export const REMOVE_TASK = "REMOVE_TASK";
 export type REMOVE_TASK = typeof REMOVE_TASK;
+
+export const COMPLETE_TASK = "COMPLETE_TASK";
+export type COMPLETE_TASK = typeof COMPLETE_TASK;
+
+export const UNCOMPLETE_TASK = "UNCOMPLETE_TASK";
+export type UNCOMPLETE_TASK = typeof UNCOMPLETE_TASK;
 
 export const TASK_CREATED = "TASK_CREATED";
 export type TASK_CREATED = typeof TASK_CREATED;

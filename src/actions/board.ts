@@ -12,6 +12,8 @@ import {
     CREATE_CARD,
     UPDATE_CARD,
     CARDS_REORDERED,
+    COMPLETE_TASK,
+    UNCOMPLETE_TASK,
     STORE_CARD,
     STORE_CARDS,
     PUT_CARD,
@@ -43,6 +45,7 @@ import {
     DELETE_CARD,
     CARD_DONE,
     MARK_CARD_AS_DONE,
+    MARK_CARD_AS_UNDONE,
     TAG_CARD,
     UNTAG_CARD,
     CREATE_TASK,
@@ -83,6 +86,16 @@ import {
 export interface GetCardPayload {
     channel_id: string;
     card_id?: string;
+}
+
+export interface CompleteTaskPayload {
+    task_id: string;
+    channel_id: string;
+}
+
+export interface UncompleteTaskPayload {
+    task_id: string;
+    channel_id: string;
 }
 
 export interface ClearCardPayload {
@@ -210,7 +223,11 @@ export interface UnarchiveCardPayload extends ArchiveCardPayload {
 }
 
 export interface MarkCardAsDonePayload {
-    done: boolean;
+    card_id: string;
+    channel_id: string;
+}
+
+export interface MarkCardAsUndonePayload {
     card_id: string;
     channel_id: string;
 }
@@ -293,6 +310,18 @@ export type ChecklistDeletedAction = Action<
     ChecklistDeletedPayload
 >;
 
+export type CompleteTaskAction = IOAction<
+    COMPLETE_TASK,
+    CompleteTaskPayload,
+    io.Task
+>;
+
+export type UncompleteTaskAction = IOAction<
+    UNCOMPLETE_TASK,
+    UncompleteTaskPayload,
+    io.Task
+>;
+
 export type CreateChecklistAction = IOAction<
     CREATE_CHECKLIST,
     CreateChecklistPayload,
@@ -346,8 +375,6 @@ export type TaskDeletedAction = Action<TASK_DELETED, TaskDeletedPayload>;
 
 export type TaskCreatedAction = Action<TASK_CREATED, io.Task>;
 
-export type TaskCompletedAction = Action<CARD_DONE, io.Card>;
-
 export type LoadCardsAction = IOAction<LOAD_CARDS, LoadCardsPayload, io.Card[]>;
 
 export type StoreCardAction = Action<STORE_CARD, io.Card>;
@@ -380,6 +407,12 @@ export type CardsReorderedAction = Action<CARDS_REORDERED, CardPosition[]>;
 
 export type MarkCardAsDoneAction = IOAction<
     MARK_CARD_AS_DONE,
+    MarkCardAsDonePayload,
+    Partial<io.Card>
+>;
+
+export type MarkCardAsUndoneAction = IOAction<
+    MARK_CARD_AS_UNDONE,
     MarkCardAsDonePayload,
     Partial<io.Card>
 >;
@@ -616,6 +649,16 @@ export function updateTask(payload: UpdateTaskPayload): UpdateTaskAction {
     return createIOAction<io.Task, UPDATE_TASK>(UPDATE_TASK, payload);
 }
 
+export function completeTask(payload: CompleteTaskPayload): CompleteTaskAction {
+    return createIOAction<io.Task, COMPLETE_TASK>(COMPLETE_TASK, payload);
+}
+
+export function uncompleteTask(
+    payload: UncompleteTaskPayload
+): UncompleteTaskAction {
+    return createIOAction<io.Task, UNCOMPLETE_TASK>(UNCOMPLETE_TASK, payload);
+}
+
 export function deleteTask(payload: DeleteTaskPayload): DeleteTaskAction {
     return createIOAction<io.Task, DELETE_TASK>(DELETE_TASK, payload);
 }
@@ -653,6 +696,15 @@ export function markCardAsDone(
 ): MarkCardAsDoneAction {
     return createIOAction<io.Card, MARK_CARD_AS_DONE>(
         MARK_CARD_AS_DONE,
+        payload
+    );
+}
+
+export function markCardAsUndone(
+    payload: MarkCardAsUndonePayload
+): MarkCardAsUndoneAction {
+    return createIOAction<io.Card, MARK_CARD_AS_UNDONE>(
+        MARK_CARD_AS_UNDONE,
         payload
     );
 }
@@ -782,10 +834,6 @@ export function putColumn(column: NormalizedColumn): PutColumnAction {
 
 export function putColumns(columns: NormalizedColumn[]): PutColumnsAction {
     return createAction(PUT_COLUMNS, columns);
-}
-
-export function taskCompleted(payload: io.Card): TaskCompletedAction {
-    return createAction(CARD_DONE, payload);
 }
 
 export function moveColumn(payload: MoveColumnPayload): MoveColumnAction {
