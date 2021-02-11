@@ -8,6 +8,7 @@ import {
     cardCreated,
     cardUpdated,
     cardDeleted,
+    cardUnarchived,
     columnCreated,
     columnUpdated,
     columnDeleted,
@@ -58,7 +59,7 @@ function* subscribe({
         });
 
         ch.on("card.unarchived", (payload: io.Card) => {
-            dispatch(cardUpdated(payload));
+            dispatch(cardUnarchived(payload));
         });
 
         ch.on("card.deleted", (payload: io.Card) => {
