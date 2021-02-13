@@ -46,8 +46,8 @@ function* logout(): Iterable<any> {
 
 export const tasks = [
     { effect: takeEvery, type: LOGOUT, handler: logout },
-    { effect: takeEvery, type: STORE_INIT, handler: loadConfig },
     { effect: takeEvery, type: STORE_INIT, handler: loadSite },
+    { effect: takeEvery, type: STORE_INIT, handler: loadConfig },
     { effect: takeEvery, type: LOAD_SITE, handler: loadSite },
-    { effect: takeEvery, type: LOAD_CONFIG, handler: loadSite },
+    { effect: takeEvery, type: LOAD_CONFIG, handler: loadConfig },
 ];
