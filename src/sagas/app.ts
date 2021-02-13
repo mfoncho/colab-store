@@ -7,6 +7,7 @@ import { State } from "..";
 
 function* init(){
     let { config, auth } = ((yield select()) as any) as State;
+    console.log(config.socket_api_endpoint);
     socket.connect(config.socket_api_endpoint, {
         token:  auth.token,
     });
