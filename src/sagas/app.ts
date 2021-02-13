@@ -1,7 +1,8 @@
 import { put, takeEvery } from "redux-saga/effects";
 import client from "@colab/client";
+import { socket } from '@colab/client'
 import { LOAD_CONFIG, LOAD_SITE, LOGOUT, STORE_INIT } from "../actions/types";
-import { LoadConfigAction, LoadSiteAction, setConfig, setSite, StoreIntAction } from "../actions/app";
+import { LoadConfigAction, LoadSiteAction, setAuth, setConfig, setSite, StoreIntAction } from "../actions/app";
 
 function* loadConfig(payload: LoadConfigAction): Iterable<any> {
     try {
@@ -36,12 +37,8 @@ function* loadSite(payload: LoadSiteAction): Iterable<any> {
 }
 
 function* logout(): Iterable<any> {
-    const form: any = document.createElement("FORM");
-    form.method = "post";
-    form.action = "/logout";
-    document.body.appendChild(form);
-    form.submit();
-    yield "logged out";
+    socket.shutdown();
+    yield put(setAuth({id:"", token:"", timestamp:""}))
 }
 
 export const tasks = [
