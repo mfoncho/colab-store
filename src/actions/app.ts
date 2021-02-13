@@ -1,5 +1,5 @@
 import { Action, createAction, createIOAction, IOAction } from ".";
-import { ROUTE, STORE_RELATED, SET_SITE, LOGOUT, SET_CONFIG, SET_AUTH, LOAD_SITE, LOAD_CONFIG, STORE_INIT } from "./types";
+import { ROUTE, LOGIN, STORE_RELATED, SET_SITE, LOGOUT, SET_CONFIG, SET_AUTH, LOAD_SITE, LOAD_CONFIG, STORE_INIT } from "./types";
 import { NormalizedRelated } from "../schemas";
 import { io } from "@colab/client";
 
@@ -7,6 +7,12 @@ export interface IAuth{
     id: string;
     token: string;
     timestamp: string;
+}
+
+export interface ILoginPayload{
+    email: string;
+    password: string;
+    remember_me?: boolean;
 }
 
 export type StoreIntAction = Action<STORE_INIT, {}>
@@ -23,6 +29,8 @@ export type SetConfigAction = Action<SET_CONFIG, Partial<io.Config>>
 
 export type LogoutAction = IOAction<LOGOUT, any, any>
 
+export type LoginAction = IOAction<LOGIN, ILoginPayload, any>
+
 export type LoadSiteAction = IOAction<LOAD_SITE, any, io.Site>
 
 export type LoadConfigAction = IOAction<LOAD_CONFIG, any, io.Config>
@@ -30,6 +38,7 @@ export type LoadConfigAction = IOAction<LOAD_CONFIG, any, io.Config>
 export function setSite(payload: Partial<io.Site>): SetSiteAction{
     return createAction(SET_SITE, payload);
 }
+
 
 export function loadSite(): LoadSiteAction{
     return createIOAction<io.Site, LOAD_SITE>(LOAD_SITE,{});
@@ -43,8 +52,12 @@ export function setAuth(payload: Partial<IAuth>): SetAuthAction{
     return createAction(SET_AUTH, payload);
 }
 
+export function login(param: ILoginPayload): LoginAction{
+    return createIOAction<io.Config, LOGIN>(LOGIN, param);
+}
+
 export function logout(): LogoutAction{
-    return createIOAction<any,LOGOUT>(LOGOUT, {});
+    return createIOAction<any, LOGOUT>(LOGOUT, {});
 }
 
 export function setConfig(payload: Partial<io.Config>): SetConfigAction{
