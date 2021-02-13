@@ -1,6 +1,7 @@
-import { put, takeEvery } from "redux-saga/effects";
+import { put, takeEvery, select } from "redux-saga/effects";
 import { INIT } from "../actions/types";
 import { socket } from "@colab/client";
+import { State } from "..";
 
 function* auth(): Iterable<any> {
     yield put({ type: "GET_CONFIG" });
@@ -23,7 +24,11 @@ function* threads(): Iterable<any> {
 }
 
 function* wsconn(): Iterable<any> {
-    socket.connect();
+    let { config, auth } = ((yield select()) as any) as State;
+    socket.connect(config.socket_api_endpoint, {
+        token:  auth.token,
+        version: config.socket_api_version,
+    });
 }
 
 export const tasks = [

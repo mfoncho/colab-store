@@ -5,7 +5,6 @@ import site from "./site";
 import role from "./role";
 import user from "./user";
 import auth from "./auth";
-import http from "./http";
 import snack from "./snack";
 import route from "./route";
 import member from "./member";
@@ -15,7 +14,6 @@ import preferences from "./preferences";
 import drawer from "./drawer";
 import presence from "./presence";
 import card from "./card";
-import session from "./session";
 import channel from "./channel";
 import column from "./column";
 import workspace from "./workspace";
@@ -36,7 +34,6 @@ const RootStates = {
     config: config.state,
     site: site.state,
     roles: role.state,
-    http: http.state,
     auth: auth.state,
     route: route.state,
     users: user.state,
@@ -49,7 +46,6 @@ const RootStates = {
     drawer: drawer.state,
     threads: thread.state,
     columns: column.state,
-    session: session.state,
     channels: channel.state,
     workspaces: workspace.state,
     checklists: checklist.state,
@@ -96,7 +92,6 @@ const reducers = {
     config: createReducer(config.reducers, config.state),
     site: createReducer(site.reducers, site.state),
     roles: createReducer(role.reducers, role.state),
-    http: createReducer(http.reducers, http.state),
     auth: createReducer(auth.reducers, auth.state),
     preferences: createReducer(preferences.reducers, preferences.state),
     route: createReducer(route.reducers, route.state),
@@ -107,7 +102,6 @@ const reducers = {
     drawer: createReducer(drawer.reducers, drawer.state),
     status: createReducer(status.reducers, status.state),
     snacks: createReducer(snack.reducers, snack.state),
-    session: createReducer(session.reducers, session.state),
     threads: createReducer(thread.reducers, thread.state),
     columns: createReducer(column.reducers, column.state),
     channels: createReducer(channel.reducers, channel.state),
