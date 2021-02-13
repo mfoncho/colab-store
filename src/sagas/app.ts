@@ -8,7 +8,6 @@ import { State } from "..";
 function* init(){
     let { config, auth } = ((yield select()) as any) as State;
     socket.connect(config.socket_api_endpoint, {
-        //version: config.socket_api_version,
         token:  auth.token,
     });
 }
@@ -45,14 +44,8 @@ function* loadSite(payload: LoadSiteAction): Iterable<any> {
     }
 }
 
-function* logout(): Iterable<any> {
-    socket.shutdown();
-    yield put(setAuth({id:"", token:"", timestamp:""}))
-}
-
 export const tasks = [
     { effect: takeEvery, type: INIT, handler: init},
-    { effect: takeEvery, type: LOGOUT, handler: logout },
     { effect: takeEvery, type: STORE_INIT, handler: loadSite },
     { effect: takeEvery, type: STORE_INIT, handler: loadConfig },
     { effect: takeEvery, type: LOAD_SITE, handler: loadSite },
