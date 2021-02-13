@@ -8,7 +8,6 @@ const watch = ({ effect, type, handler }: any) =>
 const watchers = [
     ...require("./init").tasks,
     ...require("./app").tasks,
-    ...require("./org").tasks,
     ...require("./tag").tasks,
     ...require("./role").tasks,
     ...require("./ping").tasks,

@@ -4,6 +4,27 @@ export type STORE_INIT = typeof STORE_INIT;
 export const INIT = "COLAB_INIT";
 export type INIT = typeof INIT;
 
+export const SET_SITE = "SET_SITE";
+export type SET_SITE = typeof SET_SITE;
+
+export const SET_AUTH = "SET_AUTH";
+export type SET_AUTH = typeof SET_AUTH;
+
+export const SET_CONFIG = "SET_CONFIG";
+export type SET_CONFIG = typeof SET_CONFIG;
+
+export const LOAD_SITE = "LOAD_SITE";
+export type LOAD_SITE = typeof LOAD_SITE;
+
+export const LOAD_CONFIG = "LOAD_CONFIG";
+export type LOAD_CONFIG = typeof LOAD_CONFIG;
+
+export const LOGOUT = "LOGOUT";
+export type LOGOUT = typeof LOGOUT;
+
+export const LOGIN = "LOGIN";
+export type LOGIN = typeof LOGIN;
+
 export const ROUTE = "ROUTE";
 export type ROUTE = typeof ROUTE;
 

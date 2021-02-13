@@ -1,19 +1,14 @@
-import { Record } from "immutable";
-import { MemberSchema } from "../records";
+import { AuthRecord } from "../records";
 
-const state = new MemberSchema();
+const state = new AuthRecord();
 
 export const reducers = {
-    SET_CREDS(state: MemberSchema, { payload }: any) {
-        return state;
+    SET_AUTH(state: AuthRecord, { payload }: any) {
+        return state.merge(payload);
     },
 
-    SET_AUTH_ID(state: MemberSchema, { payload }: any) {
-        return state.set("id", payload);
-    },
-
-    CLEAR_AUTH_USER(state: MemberSchema, { payload }: any) {
-        return state;
+    LOGOUT(state: AuthRecord) {
+        return new AuthRecord();
     },
 };
 

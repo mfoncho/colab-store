@@ -4,8 +4,12 @@ import { MemberRecord } from "./records";
 
 const defaultMembers = OrderedMap<string, MemberRecord>();
 
-export function org({ org }: State) {
-    return org;
+export function site({ site }: State) {
+    return site;
+}
+
+export function config({ config }: State) {
+    return config;
 }
 
 export function auth({ auth }: State) {
@@ -76,7 +80,8 @@ export function threads({ threads, route }: State) {
 }
 
 export default {
-    org,
+    site,
+    config,
     auth,
     users,
     roles,

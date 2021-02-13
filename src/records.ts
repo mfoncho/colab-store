@@ -55,12 +55,12 @@ export class StatusRecord extends Record({
     icon: "",
 }) {}
 
-export class MemberSchema
+export class AuthRecord
     extends Record(
         {
             id: "",
-            type: "csrf-token",
             token: "",
+            timestamp: "",
         },
         "auth"
     )

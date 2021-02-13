@@ -1,7 +1,7 @@
 import { Record } from "immutable";
 import { Action } from "redux";
-import app from "./app";
-import org from "./org";
+import config from "./config";
+import site from "./site";
 import role from "./role";
 import user from "./user";
 import auth from "./auth";
@@ -33,8 +33,8 @@ interface IHandlers<T> {
 const INIT = "@@INIT";
 
 const RootStates = {
-    app: app.state,
-    org: org.state,
+    config: config.state,
+    site: site.state,
     roles: role.state,
     http: http.state,
     auth: auth.state,
@@ -93,8 +93,8 @@ function createReducer<T>(
 }
 
 const reducers = {
-    app: createReducer(app.reducers, app.state),
-    org: createReducer(org.reducers, org.state),
+    config: createReducer(config.reducers, config.state),
+    site: createReducer(site.reducers, site.state),
     roles: createReducer(role.reducers, role.state),
     http: createReducer(http.reducers, http.state),
     auth: createReducer(auth.reducers, auth.state),

@@ -156,8 +156,12 @@ export function usePersonalWorkspace() {
     return workspaces.get("@personal");
 }
 
-export function useOrg() {
-    return useSelector(selector.org);
+export function useSite() {
+    return useSelector(selector.site);
+}
+
+export function useConfig() {
+    return useSelector(selector.config);
 }
 
 export function useUser(id?: string) {

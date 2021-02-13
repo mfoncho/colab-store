@@ -1,20 +1,42 @@
-import { put, select, takeEvery } from "redux-saga/effects";
+import { put, takeEvery } from "redux-saga/effects";
 import client from "@colab/client";
+import { LOAD_CONFIG, LOAD_SITE, LOGOUT, STORE_INIT } from "../actions/types";
+import { LoadConfigAction, LoadSiteAction, setConfig, setSite, StoreIntAction } from "../actions/app";
 
-function* getConfig(): Iterable<any> {
+function* loadConfig(payload: LoadConfigAction): Iterable<any> {
     try {
         const { data } = (yield client.getConfig()) as any;
-        yield put({ type: "PUT_APP_CONFIG", payload: data });
-    } catch (e) {}
+        yield put(setConfig(data));
+
+        if(payload.meta){
+            payload.meta.success(data);
+        }
+
+    } catch (e) {
+        if(payload.meta){
+            payload.meta.error(e);
+        }
+    }
+}
+
+function* loadSite(payload: LoadSiteAction): Iterable<any> {
+    try {
+        const { data } = (yield client.getSite()) as any;
+        yield put(setSite(data));
+
+        if(payload.meta){
+            payload.meta.success(data);
+        }
+
+    } catch (e) {
+        if(payload.meta){
+            payload.meta.error(e);
+        }
+    }
 }
 
 function* logout(): Iterable<any> {
-    const state = (yield select()) as any;
     const form: any = document.createElement("FORM");
-    const input: any = document.createElement("INPUT");
-    input.name = "_token";
-    input.value = state.auth.token;
-    form.appendChild(input);
     form.method = "post";
     form.action = "/logout";
     document.body.appendChild(form);
@@ -23,6 +45,9 @@ function* logout(): Iterable<any> {
 }
 
 export const tasks = [
-    { effect: takeEvery, type: "LOGOUT", handler: logout },
-    { effect: takeEvery, type: "GET_CONFIG", handler: getConfig },
+    { effect: takeEvery, type: LOGOUT, handler: logout },
+    { effect: takeEvery, type: STORE_INIT, handler: loadConfig },
+    { effect: takeEvery, type: STORE_INIT, handler: loadSite },
+    { effect: takeEvery, type: LOAD_SITE, handler: loadSite },
+    { effect: takeEvery, type: LOAD_CONFIG, handler: loadSite },
 ];
