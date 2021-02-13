@@ -19,7 +19,6 @@ export class SiteRecord extends Record<io.Site>({
 }){}
 
 export class ConfigRecord extends Record<io.Config>({
-        token: null as any,
         locale: "en_US",
         lpack: {},
         user_invitation: false,

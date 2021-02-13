@@ -6,6 +6,7 @@ import { io } from "@colab/client";
 export interface IAuth{
     id: string;
     token: string;
+    timestamp: string;
 }
 
 export type StoreIntAction = Action<STORE_INIT, {}>
