@@ -217,8 +217,12 @@ export function useThreads(id?: string) {
     return useSelector(selector);
 }
 
+export function useAuth(){
+    return useSelector(selector.auth);
+}
+
 export function useAuthId() {
-    return useSelector(selector.auth).id;
+    return useAuth().id;
 }
 
 export function useViewer() {
