@@ -222,7 +222,7 @@ function* subscribe({
     for (let thread of payload) {
         const topic = `thread:${thread.id}`;
 
-        if ((socket as any).channels.find((ch: any) => ch.topic == topic))
+        if (socket.getChannel(topic))
             continue;
 
         let ch = socket.channel(topic, {});

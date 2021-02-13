@@ -26,14 +26,6 @@ import { UserSchema } from "../schemas";
 import { State } from "..";
 import { storeRelated } from "../actions/app";
 
-function* init(): Iterable<any> {
-    try {
-        const { data } = (yield client.getAuth()) as any;
-        yield put(putUser(data));
-        yield put({ type: "SET_AUTH_ID", payload: data.id });
-    } catch (e) {}
-}
-
 function* getPreferences(): Iterable<any> {
     try {
         const { data } = (yield client.getPreferences()) as any;
@@ -108,7 +100,7 @@ function* related({ payload }: any): Iterable<any> {
 
 function* subscribe({ payload }: any): Iterable<any> {
     const topic = `user:${payload}`;
-    const sub = (socket as any).channels.find((ch: any) => ch.topic == topic);
+    const sub = socket.getChannel(topic);
     if (!Boolean(sub)) {
         let ch = socket.channel(topic, {});
         ch.on("updated", (payload: io.User) => {
@@ -123,7 +115,6 @@ function* subscribe({ payload }: any): Iterable<any> {
 
 export const tasks = [
     { effect: takeEvery, type: INIT, handler: getPreferences },
-    { effect: takeEvery, type: INIT, handler: init },
     { effect: takeEvery, type: STORE_RELATED, handler: related },
     { effect: takeEvery, type: SET_USER_STATUS, handler: status },
     { effect: takeEvery, type: SET_USER_PRESENCE, handler: presence },

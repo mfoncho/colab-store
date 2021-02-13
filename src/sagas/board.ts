@@ -33,7 +33,7 @@ function* subscribe({
     for (let board of payload as any) {
         const topic = `board:${board.id}`;
 
-        if ((socket as any).channels.find((ch: any) => ch.topic == topic))
+        if (socket.getChannel(topic))
             continue;
 
         let ch = socket.channel(topic, {});
