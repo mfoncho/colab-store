@@ -194,7 +194,7 @@ function* create({ payload, meta }: CreateChannelAction): Iterable<any> {
 
 function* clear({ payload }: ClearChannelAction): Iterable<any> {
     const topic = `channel:${payload.id}`;
-    let ch = (socket as any).channels.find((ch: any) => ch.topic == topic);
+    let ch = socket.getChannel(topic);
     if (ch) {
         ch.leave();
     }

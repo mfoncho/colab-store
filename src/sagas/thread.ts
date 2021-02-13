@@ -125,7 +125,7 @@ function* trashed({ payload }: ThreadDeletedAction): Iterable<any> {
 
 function* activity({ payload }: ThreadActivityAction): Iterable<any> {
     const topic = `thread:${payload.thread_id}`;
-    let ch = (socket as any).channels.find((ch: any) => ch.topic == topic);
+    let ch = socket.getChannel(topic);
     if (ch) {
         ch.push(payload.type, {});
     }
