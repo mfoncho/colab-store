@@ -1,8 +1,16 @@
-import { put, takeEvery } from "redux-saga/effects";
+import { put, takeEvery, select } from "redux-saga/effects";
 import client from "@colab/client";
 import { socket } from '@colab/client'
-import { LOAD_CONFIG, LOAD_SITE, LOGOUT, STORE_INIT } from "../actions/types";
+import { INIT, LOAD_CONFIG, LOAD_SITE, LOGOUT, STORE_INIT } from "../actions/types";
 import { LoadConfigAction, LoadSiteAction, setAuth, setConfig, setSite, StoreIntAction } from "../actions/app";
+import { State } from "..";
+
+function* init(){
+    let { config, auth } = ((yield select()) as any) as State;
+    socket.connect(config.socket_api_endpoint, {
+        token:  auth.token,
+    });
+}
 
 function* loadConfig(payload: LoadConfigAction): Iterable<any> {
     try {
@@ -42,6 +50,7 @@ function* logout(): Iterable<any> {
 }
 
 export const tasks = [
+    { effect: takeEvery, type: INIT, handler: init},
     { effect: takeEvery, type: LOGOUT, handler: logout },
     { effect: takeEvery, type: STORE_INIT, handler: loadSite },
     { effect: takeEvery, type: STORE_INIT, handler: loadConfig },

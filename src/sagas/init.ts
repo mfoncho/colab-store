@@ -24,11 +24,6 @@ function* threads(): Iterable<any> {
 }
 
 function* wsconn(): Iterable<any> {
-    let { config, auth } = ((yield select()) as any) as State;
-    socket.connect(config.socket_api_endpoint, {
-        token:  auth.token,
-        version: config.socket_api_version,
-    });
 }
 
 export const tasks = [
