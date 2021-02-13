@@ -25,7 +25,7 @@ export type LogoutAction = IOAction<LOGOUT, any, any>
 
 export type LoadSiteAction = IOAction<LOAD_SITE, any, io.Site>
 
-export type LoadConfigAction = IOAction<LOAD_CONFIG, any, io.Site>
+export type LoadConfigAction = IOAction<LOAD_CONFIG, any, io.Config>
 
 export function setSite(payload: Partial<io.Site>): SetSiteAction{
     return createAction(SET_SITE, payload);
@@ -36,7 +36,7 @@ export function loadSite(): LoadSiteAction{
 }
 
 export function loadConfig(): LoadConfigAction{
-    return createIOAction<io.Site, LOAD_CONFIG>(LOAD_CONFIG,{});
+    return createIOAction<io.Config, LOAD_CONFIG>(LOAD_CONFIG,{});
 }
 
 export function setAuth(payload: Partial<IAuth>): SetAuthAction{
