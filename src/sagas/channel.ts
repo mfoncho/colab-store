@@ -118,7 +118,7 @@ function* subscribe({
     for (let channel of payload as any) {
         const topic = `channel:${channel.id}`;
 
-        if ((socket as any).channels.find((ch: any) => ch.topic == topic))
+        if (socket.getChannel(topic))
             continue;
 
         let ch = socket.channel(topic, {});
