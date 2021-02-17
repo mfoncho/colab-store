@@ -27,6 +27,7 @@ import {
     ClearChannelAction,
     removeChannel,
     putChannels,
+    LoadChannelsAction,
 } from "../actions/channel";
 import {
     INIT,
@@ -39,6 +40,7 @@ import {
     CHANNEL_UPDATED,
     CHANNEL_ARCHIVED,
     PUT_CHANNEL,
+    LOAD_CHANNELS,
     PUT_CHANNELS,
     CHANNEL_UNARCHIVED,
     CHANNEL_CREATED,
@@ -87,6 +89,18 @@ function* load({ payload, meta }: LoadChannelAction): Iterable<any> {
         const [normalized, related] = Schema.normalizeOne(data);
         yield put(storeRelated(related));
         yield put(putChannel(normalized as any));
+        meta.success(data);
+    } catch (e) {
+        meta.error(e.toString());
+    }
+}
+
+function* loads({ payload, meta }: LoadChannelsAction): Iterable<any> {
+    try {
+        const { data } = (yield Client.fetchChannels(payload)) as any;
+        const [normalized, related] = Schema.normalizeOne(data);
+        yield put(storeRelated(related));
+        yield put(putChannels(normalized as any));
         meta.success(data);
     } catch (e) {
         meta.error(e.toString());
@@ -226,6 +240,8 @@ export const tasks = [
     { effect: takeEvery, type: PUT_CHANNELS, handler: subscribe },
 
     { effect: takeEvery, type: LOAD_CHANNEL, handler: load },
+
+    { effect: takeEvery, type: LOAD_CHANNELS, handler: loads },
 
     { effect: takeEvery, type: JOIN_CHANNEL, handler: join },
 

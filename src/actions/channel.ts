@@ -11,6 +11,7 @@ import {
     CREATE_CHANNEL,
     CHANNEL_JOINED,
     LOAD_CHANNEL,
+    LOAD_CHANNELS,
     CHANNEL_CREATED,
     CHANNEL_ARCHIVED,
     CHANNEL_UNARCHIVED,
@@ -86,6 +87,10 @@ export interface DeleteTagPayload {
     tag_id: string;
 }
 
+export interface LoadChannelsPayload {
+    workspace_id?: string;
+}
+
 export interface UpdateChannelPayload extends Unique, BelongsToWorkspace {
     channel_id: string;
     icon?: string;
@@ -135,6 +140,12 @@ export type SendInvitationsAction = IOAction<
     SEND_INVITATIONS,
     SendInvitationsPayload,
     any
+>;
+
+export type LoadChannelsAction = IOAction<
+    LOAD_CHANNELS,
+    LoadChannelsPayload,
+    io.Channel[]
 >;
 
 export type CreateChannelAction = IOAction<
@@ -271,6 +282,10 @@ export function channelUpdated(payload: io.Channel): ChannelUpdatedAction {
 
 export function joinChannel(payload: JoinChannelPayload): JoinChannelAction {
     return createIOAction<io.Channel, JOIN_CHANNEL>(JOIN_CHANNEL, payload);
+}
+
+export function loadChannels(payload: LoadChannelsPayload): LoadChannelsAction {
+    return createIOAction<io.Channel[], LOAD_CHANNELS>(LOAD_CHANNELS, payload);
 }
 
 export function channelJoined(payload: io.Channel): ChannelJoinedAction {
