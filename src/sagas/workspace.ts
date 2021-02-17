@@ -2,8 +2,9 @@ import { put, takeEvery, takeLatest, select } from "redux-saga/effects";
 import { State } from "..";
 import client from "@colab/client";
 import { patchWorkspace, putWorkspaces,WorkspaceUpdatedAction,  JoinedWorkspaceAction, LeftWorkspaceAction, removeWorkspace, LoadWorkspaceAction, LoadWorkspacesAction, putWorkspace } from "../actions/workspace";
-import { INIT, JOINED_WORKSPACE, LEFT_WORKSPACE, LOAD_WORKSPACE, LOAD_WORKSPACES, WORKSPACE_PERMISSIONS_UPDATED, WORKSPACE_UPDATED } from "../actions/types";
+import { CREATE_WORKSPACE, INIT, JOINED_WORKSPACE, LEFT_WORKSPACE, LOAD_WORKSPACE, LOAD_WORKSPACES, WORKSPACE_PERMISSIONS_UPDATED, WORKSPACE_UPDATED } from "../actions/types";
 import { loadChannels } from "../actions/channel";
+import { CreateWorkspaceAction } from "../actions/workspace";
 
 function* get(action: any): Iterable<any> {
     const { payload } = action;
@@ -19,6 +20,17 @@ function* get(action: any): Iterable<any> {
         }
     } catch (e) {
         yield put({ type: "GET_WORKSPACE_FAILURE", payload });
+    }
+}
+
+function * create({ payload, meta }: CreateWorkspaceAction): Iterable<any>{
+    try {
+        const { data } = (yield client.createWorkspace(payload)) as any;
+        yield put(putWorkspace(payload));
+        yield put(loadChannels({workspace_id: data.id}));
+        meta.success(data);
+    } catch (e) {
+        meta.error(e);
     }
 }
 
@@ -73,6 +85,8 @@ export const tasks = [
     { effect: takeEvery, type: LOAD_WORKSPACES, handler: loads},
 
     { effect: takeEvery, type: LEFT_WORKSPACE, handler: left },
+
+    { effect: takeEvery, type: CREATE_WORKSPACE, handler: create },
 
     { effect: takeEvery, type: JOINED_WORKSPACE, handler: joined },
 
