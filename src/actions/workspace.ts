@@ -12,6 +12,9 @@ import {
     JOINED_WORKSPACE,
     LEFT_WORKSPACE,
     WORKSPACE_CREATED,
+    LOAD_WORKSPACES,
+    WORKSPACE_PERMISSIONS_UPDATED,
+    LOAD_WORKSPACE,
 } from "./types";
 
 import { IOAction, createAction, createIOAction, Action } from "./index";
@@ -30,6 +33,9 @@ export interface UpdateWorkspacePayload {
 
 export type JoinedWorkspaceAction = 
     Action<JOINED_WORKSPACE, io.Workspace>;
+
+export type WorkspacePermissionsUpdatedAction = 
+    Action<WORKSPACE_PERMISSIONS_UPDATED, Require<Partial<io.Workspace>, "id">>
 
 export type LeftWorkspaceAction = 
     Action<LEFT_WORKSPACE, Require<Partial<io.Workspace>, "id">>;
@@ -67,6 +73,18 @@ export type UpdateWorkspaceAction = IOAction<
     io.Workspace
 >;
 
+export type LoadWorkspacesAction = IOAction<
+    LOAD_WORKSPACES,
+    {},
+    io.Workspace[]
+>;
+
+export type LoadWorkspaceAction = IOAction<
+    LOAD_WORKSPACE,
+    {workspace_id: string},
+    io.Workspace
+>;
+
 export function workspaceCreated(
     workspace: io.Workspace
 ): WorkspaceCreatedAction {
@@ -91,8 +109,8 @@ export function putWorkspaces(workspaces: NormalizedUserWorkspace[]): PutWorkspa
     return createAction(PUT_WORKSPACES, workspaces);
 }
 
-export function removeWorkspace(id: Id): RemoveWorkspaceAction {
-    return createAction(REMOVE_WORKSPACE, { id });
+export function removeWorkspace(payload: Unique): RemoveWorkspaceAction {
+    return createAction(REMOVE_WORKSPACE, payload);
 }
 
 export function JoinedWorkspace(workspace: io.Workspace): JoinedWorkspaceAction{
@@ -103,11 +121,16 @@ export function leftWorkspace(workspace: Require<Partial<io.Workspace>, "id">): 
     return createAction(LEFT_WORKSPACE, workspace);
 }
 
+export function workspacePermissionsUpdated(workspace: Require<Partial<io.Workspace>, "id">): WorkspacePermissionsUpdatedAction{
+    return createAction(WORKSPACE_PERMISSIONS_UPDATED, workspace);
+}
+
 export function workspaceUpdated(
     payload: io.Workspace
 ): WorkspaceUpdatedAction {
     return createAction(WORKSPACE_UPDATED, payload);
 }
+
 
 export function updateWorkspace(
     payload: UpdateWorkspacePayload
@@ -125,4 +148,12 @@ export function createWorkspace(
         CREATE_WORKSPACE,
         payload
     );
+}
+
+export function loadWorksapces(): LoadWorkspacesAction{
+    return createIOAction<io.Workspace[], LOAD_WORKSPACES>(LOAD_WORKSPACES, {});
+}
+
+export function loadWorkspace(id: string): LoadWorkspaceAction{
+    return createIOAction<io.Workspace, LOAD_WORKSPACE>(LOAD_WORKSPACE, {workspace_id: id});
 }

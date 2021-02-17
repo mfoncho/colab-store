@@ -1,7 +1,9 @@
 import { put, takeEvery, takeLatest, select } from "redux-saga/effects";
 import { State } from "..";
 import client from "@colab/client";
-import { putWorkspace } from "../actions/workspace";
+import { patchWorkspace, putWorkspaces,WorkspaceUpdatedAction,  JoinedWorkspaceAction, LeftWorkspaceAction, removeWorkspace, LoadWorkspaceAction, LoadWorkspacesAction, putWorkspace } from "../actions/workspace";
+import { INIT, JOINED_WORKSPACE, LEFT_WORKSPACE, LOAD_WORKSPACE, LOAD_WORKSPACES, WORKSPACE_PERMISSIONS_UPDATED, WORKSPACE_UPDATED } from "../actions/types";
+import { loadChannels } from "../actions/channel";
 
 function* get(action: any): Iterable<any> {
     const { payload } = action;
@@ -20,97 +22,65 @@ function* get(action: any): Iterable<any> {
     }
 }
 
-function* fetch(): Iterable<any> {
+function *init():Iterable<any> {
     try {
         const { data } = (yield client.fetchWorkspaces()) as any;
-
-        for (let workspace of data) {
-            yield put({ type: "INIT_WORKSPACE", payload: workspace });
-        }
+        yield put(putWorkspaces(data));
     } catch (e) {}
 }
 
-function* patch({ payload }: any): Iterable<any> {
-    yield put({ type: "PATCH_WORKSPACE", payload });
-}
+function *load({meta, payload}: LoadWorkspaceAction): Iterable<any> {
+    try {
+        const { data } = (yield client.getWorkspace(payload)) as any;
+        yield put(putWorkspace(data));
+        meta.success(data);
 
-function* memberUpdated({ payload }: any): Iterable<any> {
-    const { auth } = ((yield select()) as any) as State;
-
-    if (payload.user.id === auth.id) {
-        const workspace = { id: payload.workspace_id, role: payload.role };
-        yield put({ type: "PATCH_WORKSPACE", payload: workspace });
+    }catch(e){
+        meta.error(e);
     }
 }
 
-function* destroy({ payload }: any): Iterable<any> {
-    const state = ((yield select()) as any) as State;
+function *loads({meta}: LoadWorkspacesAction): Iterable<any> {
+    try {
+        const { data } = (yield client.fetchWorkspaces()) as any;
+        yield put(putWorkspaces(data));
+        meta.success(data);
 
-    const channels = Object.values(state.channels).filter(
-        (channel) => channel.workspace_id === payload.id
-    );
-
-    for (let channel of channels) {
-        yield put({ type: "LEFT_CHANNEL", payload: channel });
-    }
-
-    if (state.route.params.get("workspace_id") === payload.id) {
-        yield put({ type: "OPEN_WORKSPACE", payload: "1" });
-    }
-
-    yield put({ type: "REMOVE_WORKSPACE", payload: payload.id });
-}
-
-function* initialize({ payload }: any): Iterable<any> {
-    yield put({ type: "STORE_WORKSPACE", payload });
-}
-
-function* serialize({ payload: { ...workspace } }: any): Iterable<any> {
-    yield put({ type: "PUT_WORKSPACE", payload: workspace });
-}
-
-function* joined({ payload }: any): Iterable<any> {
-    yield put({ type: "INIT_WORKSPACE", payload });
-}
-
-function* left({ payload }: any): Iterable<any> {
-    yield put({ type: "DESTROY_WORKSPACE", payload: payload });
-}
-
-function* workspaceMemberUpdated({ payload }: any): Iterable<any> {
-    const state = ((yield select()) as any) as State;
-    const workspace = state.workspaces.get(payload.workspace_id);
-    if (state.auth.id === payload.user_id && workspace) {
-        const role = payload.role ? payload.role : workspace.role;
-        yield put({
-            type: "PATCH_WORKSPACE",
-            payload: { ...workspace, role },
-        });
+    }catch(e){
+        meta.error(e);
     }
 }
+
+function* patch({ payload }: WorkspaceUpdatedAction): Iterable<any> {
+    yield put(patchWorkspace(payload));
+}
+
+function* joined({ payload }: JoinedWorkspaceAction): Iterable<any> {
+    yield put(putWorkspace(payload));
+    yield put(loadChannels({workspace_id: payload.id}));
+}
+
+function* left({ payload }: LeftWorkspaceAction): Iterable<any> {
+    yield put(removeWorkspace(payload));
+}
+
 
 export const tasks = [
-    { effect: takeEvery, type: "INIT_WORKSPACE", handler: initialize },
+    { effect: takeEvery, type: INIT, handler:  init},
 
-    { effect: takeEvery, type: "STORE_WORKSPACE", handler: serialize },
+    { effect: takeEvery, type: LOAD_WORKSPACE, handler: load },
 
-    { effect: takeEvery, type: "GET_WORKSPACE", handler: get },
+    { effect: takeEvery, type: LOAD_WORKSPACES, handler: loads},
 
-    { effect: takeEvery, type: "LEFT_WORKSPACE", handler: left },
+    { effect: takeEvery, type: LEFT_WORKSPACE, handler: left },
 
-    { effect: takeEvery, type: "JOINED_WORKSPACE", handler: joined },
+    { effect: takeEvery, type: JOINED_WORKSPACE, handler: joined },
 
-    { effect: takeEvery, type: "WORKSPACE_UPDATED", handler: patch },
-
-    { effect: takeEvery, type: "DESTROY_WORKSPACE", handler: destroy },
-
-    { effect: takeLatest, type: "FETCH_WORKSPACES", handler: fetch },
-
-    { effect: takeEvery, type: "WORKSPACE_ROLE_UPDATED", handler: patch },
+    { effect: takeEvery, type: WORKSPACE_UPDATED, handler: patch },
 
     {
         effect: takeEvery,
-        type: "WORKSPACE_MEMBER_UPDATED",
-        handler: workspaceMemberUpdated,
+        type: WORKSPACE_PERMISSIONS_UPDATED,
+        handler: patch,
     },
 ];
