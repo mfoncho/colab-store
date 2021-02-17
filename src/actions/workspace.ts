@@ -1,4 +1,4 @@
-import { Id, Unique } from "@colab/types";
+import { Id, Require, Unique } from "@colab/types";
 import { io } from "@colab/client";
 import {
     CREATE_WORKSPACE,
@@ -9,7 +9,8 @@ import {
     PATCH_WORKSPACES,
     REMOVE_WORKSPACE,
     WORKSPACE_UPDATED,
-    WORKSPACE_DELETED,
+    JOINED_WORKSPACE,
+    LEFT_WORKSPACE,
     WORKSPACE_CREATED,
 } from "./types";
 
@@ -18,23 +19,26 @@ import { NormalizedUserWorkspace } from "../schemas";
 
 export interface CreateWorkspacePayload {
     name: string;
-    description: string;
+    is_home: boolean;
+    template_id: string;
 }
 
-export interface UpdateWorkspacePayload extends Unique {
-    icon?: string;
+export interface UpdateWorkspacePayload {
     name?: string;
-    description?: string;
+    workspace_id: string;
 }
+
+export type JoinedWorkspaceAction = 
+    Action<JOINED_WORKSPACE, io.Workspace>;
+
+export type LeftWorkspaceAction = 
+    Action<LEFT_WORKSPACE, Require<Partial<io.Workspace>, "id">>;
 
 export type WorkspaceCreatedAction = 
     Action<WORKSPACE_CREATED, io.Workspace>;
 
 export type WorkspaceUpdatedAction = 
     Action<WORKSPACE_UPDATED, io.Workspace>;
-
-export type WorkspaceDeletedAction = 
-    Action<WORKSPACE_DELETED, io.Workspace>;
 
 export type PutWorkspaceAction = 
     Action<PUT_WORKSPACE, NormalizedUserWorkspace>;
@@ -91,16 +95,18 @@ export function removeWorkspace(id: Id): RemoveWorkspaceAction {
     return createAction(REMOVE_WORKSPACE, { id });
 }
 
+export function JoinedWorkspace(workspace: io.Workspace): JoinedWorkspaceAction{
+    return createAction(JOINED_WORKSPACE, workspace);
+}
+
+export function leftWorkspace(workspace: Require<Partial<io.Workspace>, "id">): LeftWorkspaceAction{
+    return createAction(LEFT_WORKSPACE, workspace);
+}
+
 export function workspaceUpdated(
     payload: io.Workspace
 ): WorkspaceUpdatedAction {
     return createAction(WORKSPACE_UPDATED, payload);
-}
-
-export function workspaceDeleted(
-    payload: io.Workspace
-): WorkspaceDeletedAction {
-    return createAction(WORKSPACE_DELETED, payload);
 }
 
 export function updateWorkspace(
