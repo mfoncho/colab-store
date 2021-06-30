@@ -29,7 +29,7 @@ export const factory = (
         const task = (yield fork(start, sigsrt)) as any;
 
         do {
-            sigtstp = yield take(SIGTSTP);
+            sigtstp = (yield take(SIGTSTP)) as any;
         } while (sigtstp.id !== sigsrt.id);
 
         yield cancel(task);
@@ -49,7 +49,7 @@ export const singleton = (
 
         try {
             yield put({ type: "START_JOB", payload: job });
-            const task = yield fork(handler, sigsrt);
+            const task = (yield fork(handler, sigsrt)) as any;
 
             yield take(SIGSTOP);
             yield put({ type: "STOP_JOB", payload: job });
