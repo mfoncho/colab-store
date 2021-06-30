@@ -185,6 +185,14 @@ export class SpaceRecord
         return data;
     }
 
+    get is_private() {
+        return this.access == "private";
+    }
+
+    get is_public() {
+        return this.access == "public";
+    }
+
     get is_board() {
         return this.type === "board";
     }
