@@ -102,16 +102,8 @@ export function useMembers(id?: string) {
     return useSelector(select);
 }
 
-export function useRoles(id?: string) {
-    const select = useCallback(
-        id
-            ? ({ roles }: State) => {
-                  return roles.get(id);
-              }
-            : selector.roles,
-        [id]
-    );
-    return useSelector(select) ?? defaultRoles;
+export function useRoles() {
+    return useSelector(selector.roles);
 }
 
 export function useThreadProp(id: string, prop: string) {
