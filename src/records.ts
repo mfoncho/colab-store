@@ -165,6 +165,7 @@ export class SpaceRecord
         roles: Map<string, SpaceRoleRecord>(),
         joined_at: "",
         created_at: "",
+        archived_at: null as string | null,
     })
     implements Unique {
     constructor(data: any) {
@@ -189,6 +190,10 @@ export class SpaceRecord
 
     get is_direct() {
         return this.type === "direct";
+    }
+
+    get is_archived() {
+        return Boolean(this.archived_at);
     }
 
     get is_discuss() {
