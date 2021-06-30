@@ -15,8 +15,8 @@ export const factory = (
     start: any,
     effect = takeEvery
 ) => {
-    function* worker(sigsrt: any) {
-        let sigtstp = { type: SIGTSTP, id: ''};
+    function* worker(sigsrt: any): Iterable<any> {
+        let sigtstp = { type: SIGTSTP, id: "" };
 
         const job = {
             id: sigsrt.id,
@@ -44,7 +44,7 @@ export const singleton = (
     handler: any,
     effect = takeLatest
 ) => {
-    function* worker(sigsrt: string) {
+    function* worker(sigsrt: string): Iterable<any> {
         const job = { id: SIGSRT, signals: [SIGSTOP, SIGSRT] };
 
         try {
