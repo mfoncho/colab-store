@@ -1,5 +1,5 @@
 import {
-    ThreadSchema, UserChannelSchema, CardSchema, ChecklistSchema, UserSchema,
+    ThreadSchema, SpaceSchema, CardSchema, ChecklistSchema, UserSchema,
     ColumnSchema, MessageSchema
 } from './schemas'
 
@@ -19,8 +19,8 @@ export type NormalizedChecklist = ReturnType<
     typeof ChecklistSchema["normalizeOne"]
 >[0];
 
-export type NormalizedUserChannel = ReturnType<
-    typeof UserChannelSchema["normalizeOne"]
+export type NormalizedSpace = ReturnType<
+    typeof SpaceSchema["normalizeOne"]
 >[0];
 
 export type NormalizedColumn = ReturnType<
@@ -33,5 +33,5 @@ export type NormalizedMessage = ReturnType<
 
 export type NormalizedRelated =
     | typeof UserSchema
-    | typeof UserChannelSchema;
+    | typeof SpaceSchema;
 

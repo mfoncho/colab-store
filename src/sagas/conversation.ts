@@ -74,7 +74,6 @@ function* load({ payload, meta }: LoadConversationAction): Iterable<any> {
         );
 
         const { data } = (yield client.fetchMessages({
-            channel_id: payload.channel_id,
             thread_id: payload.thread_id,
             params,
         })) as any;

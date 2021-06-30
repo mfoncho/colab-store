@@ -1,13 +1,15 @@
 import { Record, List, fromJS, Map, OrderedMap } from "immutable";
 import {
     Unique,
-    BelongsToWorkspace,
     Positioned,
-    BelongsToChannel,
+    BelongsToSpace,
     Id,
     Timestamped,
+    SpaceType,
+    AccessType,
     ThreadType,
     BelongsToThread,
+    BelongsToBoard,
 } from "@colab/client";
 import { io } from "@colab/client";
 
@@ -15,23 +17,23 @@ export class SiteRecord extends Record<io.Site>({
     name: "colab",
     icon: "",
     title: "Colaborations",
-    about: "Colaborations"
-}){}
+    about: "Colaborations",
+}) {}
 
 export class ConfigRecord extends Record<io.Config>({
-        locale: "en_US",
-        lpack: {},
-        user_invitation: false,
-        user_registration: false,
-        admin_api_version: "",
-        client_api_version: "",
-        socket_api_version: "",
-        admin_api_endpoint: "",
-        client_api_endpoint: "",
-        socket_api_endpoint: "",
-        socket_api_protocol: "",
-        auth_providers: [[ "email", "password"]],
-}){}
+    locale: "en_US",
+    lpack: {},
+    user_invitation: false,
+    user_registration: false,
+    admin_api_version: "",
+    client_api_version: "",
+    socket_api_version: "",
+    admin_api_endpoint: "",
+    client_api_endpoint: "",
+    socket_api_endpoint: "",
+    socket_api_protocol: "",
+    auth_providers: [["email", "password"]],
+}) {}
 
 export class PreferencesRecord extends Record<io.Preferences>({
     theme: "",
@@ -54,17 +56,6 @@ export class StatusRecord extends Record({
     icon: "",
 }) {}
 
-export class AuthRecord
-    extends Record(
-        {
-            id: "",
-            token: "",
-            timestamp: "",
-        },
-        "auth"
-    )
-    implements Unique {}
-
 export class UserRecord
     extends Record(
         {
@@ -74,33 +65,14 @@ export class UserRecord
             phone: "",
             verified: false,
             avatar: (null as any) as string,
-            about: "",
+            bio: "",
             status_id: "0" as Id,
         },
         "user"
     )
     implements Unique {}
 
-export class WorkspacePermissionsRecord extends Record({
-    join_channels: false,
-    create_channel: false,
-}) {}
-
-export class WorkspaceRoleRecord
-    extends Record({
-        id: "0" as Id,
-        name: "default",
-        is_default: true,
-        permissions: new WorkspacePermissionsRecord(),
-    })
-    implements Unique {
-    constructor({ permissions, ...params }: any) {
-        permissions = new WorkspacePermissionsRecord(permissions);
-        super({ ...params, permissions });
-    }
-}
-
-export class ChannelPermissions extends Record({
+export class Permissions extends Record({
     upload_limit: 0,
     upload_types: "",
     create_card: false,
@@ -126,52 +98,78 @@ export class ChannelPermissions extends Record({
     manage_invitations: false,
 }) {}
 
-export class ChannelRoleRecord
-    extends Record({
-        id: "0" as Id,
-        name: "default",
-        is_default: true,
-        channel_id: "" as Id,
-        permissions: new ChannelPermissions(),
-    })
-    implements Unique {
-    constructor({ permissions, ...params }: any) {
-        permissions = new ChannelPermissions(permissions);
-        super({ ...params, permissions });
-    }
-}
+export class AuthRecord
+    extends Record(
+        {
+            id: "",
+            token: "",
+            role_id: "",
+            timestamp: "",
+            permissions: new Permissions(),
+        },
+        "auth"
+    )
+    implements Unique {}
 
-export class TagRecord
+export class SpaceRoleRecord
     extends Record({
         id: "0" as Id,
-        name: "tag",
-        color: "blue",
+        role_id: "" as Id,
+        space_id: "" as Id,
+        permissions: {} as object,
     })
     implements Unique {}
 
-export class ChannelRecord
+export class LabelRecord
+    extends Record({
+        id: "0" as Id,
+        name: "label",
+        color: "blue",
+        board_id: "" as Id,
+    })
+    implements Unique {}
+
+export class BoardRecord
+    extends Record({
+        id: "0" as Id,
+        icon: "",
+        name: "label",
+        labels: List<LabelRecord>(),
+    })
+    implements Unique {
+    constructor({ labels, ...card }: any) {
+        labels = List(labels.map((label: any) => new CardRecord(label)));
+        super({ ...card, labels });
+    }
+
+    static objectFromJS(data: any) {
+        if (data.labels) {
+            let labels = List(
+                data.labels.map((label: any) => new CardRecord(label))
+            );
+            data = { ...data, labels };
+        }
+        return data;
+    }
+}
+
+export class SpaceRecord
     extends Record({
         id: "0" as Id,
         icon: "",
         name: "colab",
-        purpose: "",
-        admin_id: "0" as Id,
+        type: "discuss" as SpaceType,
+        access: "public" as AccessType,
+        board_id: null as string | null,
+        topic_id: null as string | null,
         member_id: "0" as Id,
-        users: List<string>(),
-        tags: List<TagRecord>(),
-        permissions: new ChannelPermissions({}),
+        roles: Map<string, SpaceRoleRecord>(),
         timestamp: "",
         joined_at: "",
-        is_board: false,
-        is_direct: false,
-        is_private: false,
-        is_archived: false,
-        workspace_id: "0",
-        main_thread_id: "0" as Id,
     })
-    implements Unique, BelongsToWorkspace {
+    implements Unique {
     constructor(data: any) {
-        super(ChannelRecord.objectFromJS(data));
+        super(SpaceRecord.objectFromJS(data));
     }
 
     toServer() {
@@ -179,28 +177,20 @@ export class ChannelRecord
     }
 
     static mapFromJS(data: any) {
-        return ChannelRecord.objectFromJS(data);
+        return SpaceRecord.objectFromJS(data);
     }
 
     static objectFromJS(data: any) {
-        if (data.permissions) {
-            const permissions = new ChannelPermissions(data.permissions);
-            data = { ...data, permissions };
-        }
-        if (data.tags) {
-            let tags = List(data.tags.map((tag: any) => new TagRecord(tag)));
-            data = { ...data, tags };
-        }
         return data;
     }
 }
 
-export class CardTag
+export class CardLabel
     extends Record({
         id: "",
-        tag_id: "",
         card_id: "",
-        tagged_at: "",
+        label_id: "",
+        labeled_at: "",
     })
     implements Unique {}
 
@@ -209,31 +199,33 @@ export class CardRecord
         id: "",
         name: "",
         done: false,
-        tags: List<CardTag>(),
+        labels: List<CardLabel>(),
         user_id: "",
         deadline: null as string | null,
         position: 0,
         thread_id: "",
         column_id: "",
         timestamp: "",
-        channel_id: "",
+        board_id: "",
         description: "",
         archived_at: null as string | null,
     })
-    implements Unique, Positioned, BelongsToChannel {
-    constructor({ tags, ...card }: any) {
-        tags = List(tags.map((tag: any) => new CardTag(tag)));
-        super({ ...card, tags });
+    implements Unique, Positioned, BelongsToBoard {
+    constructor({ labels, ...card }: any) {
+        labels = List(labels.map((label: any) => new CardLabel(label)));
+        super({ ...card, labels });
     }
 
     getStorePath(): [Id, Id, Id] {
-        return [this.channel_id, this.column_id, this.id];
+        return [this.board_id, this.column_id, this.id];
     }
 
     static objectFromJS(data: any) {
-        if (data.tags) {
-            let tags = List(data.tags.map((tag: any) => new CardTag(tag)));
-            data = { ...data, tags };
+        if (data.labels) {
+            let labels = List(
+                data.labels.map((label: any) => new CardLabel(label))
+            );
+            data = { ...data, labels };
         }
         return data;
     }
@@ -282,28 +274,11 @@ export class ChecklistRecord
     }
 }
 
-export class CategoryRecord
-    extends Record({
-        id: "0",
-        name: "",
-        timestamp: "",
-        workspace_id: "",
-    })
-    implements Unique, BelongsToWorkspace {}
-
 export class WorkspaceRecord
     extends Record({
         id: "0",
         name: "",
         icon: "",
-        role: new WorkspaceRoleRecord({ permissions: {} }),
-        categories: List<CategoryRecord>(),
-        timestamp: "",
-        description: "",
-        topic: "",
-        is_root: false,
-        joined_at: "",
-        membership_id: "",
     })
     implements Unique {
     constructor(props: any) {
@@ -315,15 +290,6 @@ export class WorkspaceRecord
     }
 
     static objectFromJS(data: any) {
-        if (data.role) {
-            data = { ...data, role: new WorkspaceRoleRecord(data.role) };
-        }
-        if (data.categories) {
-            let categories = List(
-                data.categories.map((cat: any) => new CategoryRecord(cat))
-            );
-            data = { ...data, categories };
-        }
         return data;
     }
 }
@@ -334,10 +300,10 @@ export class MemberRecord
         role_id: "",
         user_id: "",
         joined_at: "",
-        channel_id: "",
+        space_id: "",
         membership_id: "",
     })
-    implements Unique, BelongsToChannel {}
+    implements Unique, BelongsToSpace {}
 
 export class ColumnRecord
     extends Record({
@@ -347,10 +313,10 @@ export class ColumnRecord
         origin: false,
         position: 0,
         capacity: 0,
-        channel_id: "" as Id,
+        board_id: "" as Id,
         archived_at: null,
     })
-    implements Unique, Positioned, BelongsToChannel {
+    implements Unique, Positioned, BelongsToBoard {
     static mapFromJS(data: any) {
         return Map(ColumnRecord.objectFromJS(data));
     }
@@ -360,7 +326,7 @@ export class ColumnRecord
     }
 
     getStorePath(): [Id, Id] {
-        return [this.channel_id, this.id];
+        return [this.board_id, this.id];
     }
 }
 class Loading extends Record({
@@ -393,13 +359,10 @@ export class ThreadHistory extends Record({}) {}
 export class ThreadRecord
     extends Record({
         id: "0" as Id,
-        type: "main" as ThreadType,
-        topic: "",
+        type: "topic" as ThreadType,
+        name: "",
         timestamp: "",
-        is_main: false,
-        is_active: true,
-        is_default: false,
-        channel_id: "0" as Id,
+        space_id: "0" as Id,
         message_count: 0,
         last_message_id: "" as Id,
         first_message_id: "" as Id,
@@ -413,7 +376,7 @@ export class ThreadRecord
         hcache: OrderedMap<string, ChatMessage>(),
         history: OrderedMap<string, ChatMessage>(),
     })
-    implements Unique, BelongsToChannel {
+    implements Unique, BelongsToSpace {
     static mapFromJS(data: any) {
         return fromJS(ThreadRecord.objectFromJS(data));
     }
@@ -426,8 +389,12 @@ export class ThreadRecord
         return this.type == "main";
     }
 
+    get isTopic() {
+        return this.type == "topic";
+    }
+
     getStorePath(): [Id, Id] {
-        return [this.channel_id, this.id];
+        return [this.space_id, this.id];
     }
 
     getHistoryAtIndex(index: number): ChatMessage | undefined {
@@ -468,14 +435,16 @@ export class UsersReactionRecord extends Record({
 export class MessageRecord
     extends Record({
         id: "0" as Id,
-        text: "",
+        content: "",
         pinned: false,
+        attachement: null as any,
+        embedded: [],
         flagged: false,
         user_id: "0" as Id,
         markdown: false,
         timestamp: "",
         thread_id: "0" as Id,
-        channel_id: "0" as Id,
+        space_id: "0" as Id,
         reply_thread_id: null as string | null,
         reactions: List<UsersReactionRecord>(),
         last_reply: null as MessageRecord | null,
@@ -486,7 +455,7 @@ export class MessageRecord
     }
 
     getPath() {
-        return [this.channel_id, this.thread_id, "messages", this.id];
+        return [this.thread_id, "messages", this.id];
     }
 
     static mapFromJS(data: any) {

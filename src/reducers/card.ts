@@ -16,9 +16,9 @@ type CardIDT = string;
 
 type ColumnIDT = string;
 
-type ChannelIDT = string;
+type SpaceIDT = string;
 
-type CardPathT = [ChannelIDT, ColumnIDT, CardIDT];
+type CardPathT = [SpaceIDT, ColumnIDT, CardIDT];
 
 const defaultColumnCards = OrderedMap<string, CardRecord>();
 
@@ -26,7 +26,7 @@ export class Cards extends Record(
     {
         paths: Map<CardIDT, CardPathT>(),
         entities: Map<
-            ChannelIDT,
+            SpaceIDT,
             Map<ColumnIDT, OrderedMap<CardIDT, CardRecord>>
         >(),
     },

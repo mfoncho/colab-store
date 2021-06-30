@@ -19,7 +19,7 @@ export type State = Map<string, OrderedMap<string, MemberRecord>>;
 export const state: State = Map();
 
 function put(state: State, { payload }: PutMemberAction) {
-    const path = [payload.channel_id, payload.id];
+    const path = [payload.space_id, payload.id];
     return state.withMutations((state) => {
         return state.setIn(path, new MemberRecord(payload));
     });
@@ -28,21 +28,21 @@ function put(state: State, { payload }: PutMemberAction) {
 function puts(state: State, { payload }: PutMembersAction) {
     return state.withMutations((state) => {
         return payload.reduce((state, member) => {
-            const path = [member.channel_id, member.id];
+            const path = [member.space_id, member.id];
             return state.setIn(path, new MemberRecord(member));
         }, state);
     });
 }
 
 function patch(state: State, { payload }: PatchMemberAction) {
-    const path = [payload.channel_id, payload.id];
+    const path = [payload.space_id, payload.id];
     return state.withMutations((state) => {
         return state.mergeIn(path, payload);
     });
 }
 
 function remove(state: State, { payload }: RemoveMemberAction) {
-    return state.deleteIn([payload.channel_id, payload.id]);
+    return state.deleteIn([payload.space_id, payload.id]);
 }
 
 export const reducers = {

@@ -1,68 +1,56 @@
 import { put, takeEvery } from "redux-saga/effects";
 import {
-    UPDATE_CHANNEL_ROLE,
-    CREATE_CHANNEL_ROLE,
-    CHANNEL_ROLE_UPDATED,
-    DELETE_CHANNEL_ROLE,
-    CHANNEL_ROLE_CREATED,
-    FETCH_CHANNEL_ROLES,
-    LOAD_CHANNEL_ROLES,
-    SET_DEFAULT_CHANNEL_ROLE,
+    UPDATE_SPACE_PERMISSIONS,
+    CREATE_SPACE_ROLE,
+    SPACE_ROLE_UPDATED,
+    DELETE_SPACE_ROLE,
+    SPACE_ROLE_CREATED,
+    FETCH_SPACE_ROLES,
+    LOAD_SPACE_ROLES,
+    SET_DEFAULT_SPACE_ROLE,
 } from "../actions/types";
 import {
-    UpdateChannelRoleAction,
-    ChannelRoleUpdatedAction,
+    UpdateSpacePermissionsAction,
+    SpaceRoleUpdatedAction,
     roleUpdated,
-    removeChannelRole,
-    patchChannelRole,
-    ChannelRoleCreatedAction,
-    CreateChannelRoleAction,
+    removeSpaceRole,
+    patchSpaceRole,
+    SpaceRoleCreatedAction,
+    CreateSpaceRoleAction,
     roleCreated,
-    DeleteChannelRoleAction,
-    putChannelRole,
-    FetchChannelRolesAction,
-    LoadChannelRolesAction,
-    fetchChannelRoles,
-    putChannelRoles,
-    SetDefaultChannelRoleAction,
-} from "../actions/channelRole";
+    DeleteSpaceRoleAction,
+    putSpaceRole,
+    FetchSpaceRolesAction,
+    LoadSpaceRolesAction,
+    fetchSpaceRoles,
+    putSpaceRoles,
+    UpdateSpacePermissionsPayload,
+} from "../actions/role";
+
 import Client from "@colab/client";
 
-function* fetch({ payload, meta }: FetchChannelRolesAction): Iterable<any> {
+function* fetch({ payload, meta }: FetchSpaceRolesAction): Iterable<any> {
     try {
-        const { data } = (yield Client.fetchRoles(payload)) as any;
+        const { data } = (yield Client.fetchSpaceRoles(payload)) as any;
         meta.success(data);
     } catch (e) {
         meta.error(e);
     }
 }
 
-function* setDefault({
-    payload,
-    meta,
-}: SetDefaultChannelRoleAction): Iterable<any> {
+function* load({ payload, meta }: LoadSpaceRolesAction): Iterable<any> {
     try {
-        const { data } = (yield Client.setDefaultRole(payload)) as any;
-        yield put(patchChannelRole(data));
-        meta.success(data);
-    } catch (e) {
-        meta.error(e);
-    }
-}
-
-function* load({ payload, meta }: LoadChannelRolesAction): Iterable<any> {
-    try {
-        const roles = (yield yield put(fetchChannelRoles(payload))) as any;
-        yield put(putChannelRoles(roles));
+        const roles = (yield yield put(fetchSpaceRoles(payload))) as any;
+        yield put(putSpaceRoles(roles));
         meta.success(roles);
     } catch (e) {
         meta.error(e);
     }
 }
 
-function* create({ payload, meta }: CreateChannelRoleAction): Iterable<any> {
+function* create({ payload, meta }: CreateSpaceRoleAction): Iterable<any> {
     try {
-        const { data } = (yield Client.createRole(payload)) as any;
+        const { data } = (yield Client.createSpaceRole(payload)) as any;
         yield put(roleCreated(data));
         meta.success(data);
     } catch (e) {
@@ -70,13 +58,13 @@ function* create({ payload, meta }: CreateChannelRoleAction): Iterable<any> {
     }
 }
 
-function* created({ payload }: ChannelRoleCreatedAction): Iterable<any> {
-    yield put(putChannelRole(payload));
+function* created({ payload }: SpaceRoleCreatedAction): Iterable<any> {
+    yield put(putSpaceRole(payload));
 }
 
-function* update({ payload, meta }: UpdateChannelRoleAction): Iterable<any> {
+function* update({ payload, meta }: UpdateSpacePermissionsAction): Iterable<any> {
     try {
-        const { data } = (yield Client.updateRole(payload)) as any;
+        const { data } = (yield Client.updateSpaceRolePermissions(payload)) as any;
         yield put(roleUpdated(data));
         meta.success(data);
     } catch (e) {
@@ -84,17 +72,17 @@ function* update({ payload, meta }: UpdateChannelRoleAction): Iterable<any> {
     }
 }
 
-function* updated({ payload }: ChannelRoleUpdatedAction): Iterable<any> {
-    yield put(patchChannelRole(payload));
+function* updated({ payload }: SpaceRoleUpdatedAction): Iterable<any> {
+    yield put(patchSpaceRole(payload));
 }
 
-function* destroy({ payload, meta }: DeleteChannelRoleAction): Iterable<any> {
+function* destroy({ payload, meta }: DeleteSpaceRoleAction): Iterable<any> {
     try {
-        const { data } = (yield Client.deleteRole(payload)) as any;
+        const { data } = (yield Client.deleteSpaceRole(payload)) as any;
         yield put(
-            removeChannelRole({
+            removeSpaceRole({
                 id: payload.role_id,
-                channel_id: payload.channel_id,
+                space_id: payload.space_id,
             })
         );
         meta.success(data);
@@ -104,12 +92,11 @@ function* destroy({ payload, meta }: DeleteChannelRoleAction): Iterable<any> {
 }
 
 export const tasks = [
-    { effect: takeEvery, type: LOAD_CHANNEL_ROLES, handler: load },
-    { effect: takeEvery, type: FETCH_CHANNEL_ROLES, handler: fetch },
-    { effect: takeEvery, type: CREATE_CHANNEL_ROLE, handler: create },
-    { effect: takeEvery, type: UPDATE_CHANNEL_ROLE, handler: update },
-    { effect: takeEvery, type: DELETE_CHANNEL_ROLE, handler: destroy },
-    { effect: takeEvery, type: CHANNEL_ROLE_UPDATED, handler: updated },
-    { effect: takeEvery, type: CHANNEL_ROLE_CREATED, handler: created },
-    { effect: takeEvery, type: SET_DEFAULT_CHANNEL_ROLE, handler: setDefault },
+    { effect: takeEvery, type: LOAD_SPACE_ROLES, handler: load },
+    { effect: takeEvery, type: FETCH_SPACE_ROLES, handler: fetch },
+    { effect: takeEvery, type: CREATE_SPACE_ROLE, handler: create },
+    { effect: takeEvery, type: UPDATE_SPACE_PERMISSIONS, handler: update },
+    { effect: takeEvery, type: DELETE_SPACE_ROLE, handler: destroy },
+    { effect: takeEvery, type: SPACE_ROLE_UPDATED, handler: updated },
+    { effect: takeEvery, type: SPACE_ROLE_CREATED, handler: created },
 ];

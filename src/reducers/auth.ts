@@ -7,7 +7,7 @@ export const reducers = {
         return state.merge(payload);
     },
 
-    LOGOUT(state: AuthRecord) {
+    LOGOUT() {
         return new AuthRecord();
     },
 };

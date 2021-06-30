@@ -25,12 +25,12 @@ import {
     LOADING_CONVERSATION,
     CONCAT_CONVERSATION,
     TRIM_CONVSERSATION,
-    REMOVE_CHANNEL,
+    REMOVE_SPACE,
     REMOVE_THREAD,
 } from "../actions/types";
 import { ThreadRecord, MessageRecord, ChatMessage } from "../records";
 import { Id, Timestamped, Unique } from "../utils";
-import { RemoveChannelAction } from "../actions/channel";
+import { RemoveSpaceAction } from "../actions/space";
 
 const sort = (a: Timestamped & Unique, b: Timestamped & Unique) => {
     if (a.timestamp < b.timestamp) return -1;
@@ -161,7 +161,7 @@ export class ThreadsState extends Record(
         if (prev) {
             thread = prev.merge(thread);
         }
-        const path = [thread.channel_id, thread.type, thread.id];
+        const path = [thread.space_id, thread.type, thread.id];
         return this.setIn(["paths", thread.id], path).setIn(
             ["entities", ...path],
             thread
@@ -192,9 +192,9 @@ export const reducers = {
         return state.deleteThread(payload);
     },
 
-    [REMOVE_CHANNEL]: (
+    [REMOVE_SPACE]: (
         state: ThreadsState,
-        { payload }: RemoveChannelAction
+        { payload }: RemoveSpaceAction
     ) => {
         return state.withMutations((state) => {
             const threads = state.entities.get(payload.id);

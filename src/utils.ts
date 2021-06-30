@@ -5,8 +5,8 @@ export interface Timestamped{
 	timestamp: string;
 }
 
-export interface BelongsToChannel {
-	channel_id: string;
+export interface BelongsToSpace {
+	space_id: string;
 }
 
 export interface BelongsToThread {

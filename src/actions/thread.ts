@@ -47,16 +47,16 @@ import {
 } from "./types";
 
 export interface LoadTopicsPayload {
-    channel_id: string;
+    space_id: string;
 }
 
 export interface CreateTopicPayload {
-    channel_id: string;
+    space_id: string;
     topic: string;
 }
 
 export interface UpdateTopicPayload {
-    channel_id: string;
+    space_id: string;
     thread_id: string;
     is_active?: boolean;
     is_default?: boolean;
@@ -64,7 +64,7 @@ export interface UpdateTopicPayload {
 }
 
 export interface DeleteTopicPayload {
-    channel_id: string;
+    space_id: string;
     thread_id: string;
 }
 
@@ -72,13 +72,13 @@ export interface TrimConversationPayload {
     mode: "top" | "bottom";
     amount: number;
     thread_id: string;
-    channel_id?: string;
+    space_id?: string;
 }
 
 export interface ThreadActivityPayload {
     type: "typing" | "viewing";
     thread_id: string;
-    channel_id: string;
+    space_id: string;
 }
 
 export interface SetConversationPagePayload {
@@ -86,27 +86,27 @@ export interface SetConversationPagePayload {
     top: number;
     follow: boolean;
     thread_id: string;
-    channel_id: string;
+    space_id: string;
 }
 
 export interface LoadConversationPayload {
     message_id?: string;
-    channel_id: string;
+    space_id: string;
     thread_id: string;
     limit: number;
     more: "top" | "bottom" | "around";
 }
 
 export interface LoadThreadPayload {
-    channel_id: string;
+    space_id: string;
     thread_id: string;
 }
 
 export interface UpdateMessagePayload {
     markdown?: boolean;
-    text: string;
+    content: string;
     thread_id: string;
-    channel_id: string;
+    space_id: string;
     message_id: string;
 }
 
@@ -117,16 +117,17 @@ export interface ConcatConversationPayload {
 }
 
 export interface PostMessagePayload {
-    text: string;
-    file?: File;
+    embeds: [];
+    content: string;
+    attachment?: File;
     markdown?: boolean;
     thread_id: string;
-    channel_id: string;
+    space_id: string;
 }
 
 export type ThreadDeletedPayload = Require<
     Partial<io.Thread>,
-    "id" | "channel_id"
+    "id" | "space_id"
 >;
 
 export type RemoveThreadPayload = ThreadDeletedPayload;
@@ -135,12 +136,12 @@ export type MinimalMessage = Require<Partial<io.Message>, "id" | "thread_id">;
 
 export interface InitConversationPayload {
     thread_id: string;
-    channel_id: string;
+    space_id: string;
 }
 
 export interface FetchMessagesPayload {
     thread_id: string;
-    channel_id: string;
+    space_id: string;
     page?: {
         limit?: number;
         after?: string;
@@ -149,7 +150,7 @@ export interface FetchMessagesPayload {
 }
 
 export interface DeleteMessagePayload {
-    channel_id: string;
+    space_id: string;
     thread_id: string;
     message_id: string;
 }
@@ -169,39 +170,39 @@ export interface LoadingConversationPayload {
 export interface ReactMessagePayload {
     message_id: string;
     thread_id: string;
-    channel_id: string;
+    space_id: string;
     name: string;
 }
 
 export interface UnreactMessagePayload {
     message_id: string;
     thread_id: string;
-    channel_id: string;
+    space_id: string;
     name: string;
 }
 
 export interface PinMessagePayload {
     message_id: string;
     thread_id: string;
-    channel_id: string;
+    space_id: string;
 }
 
 export interface FlagMessagePayload {
     message_id: string;
     thread_id: string;
-    channel_id: string;
+    space_id: string;
 }
 
 export interface UnpinMessagePayload {
     message_id: string;
     thread_id: string;
-    channel_id: string;
+    space_id: string;
 }
 
 export interface UnflagMessagePayload {
     message_id: string;
     thread_id: string;
-    channel_id: string;
+    space_id: string;
 }
 
 export interface PutMessagesPayload {
@@ -217,7 +218,7 @@ export interface PutMessagePayload {
 
 export interface GetThreadPayload {
     thread_id: string;
-    channel_id: string;
+    space_id: string;
 }
 
 export interface RemoveMessagePayload {

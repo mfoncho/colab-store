@@ -251,30 +251,30 @@ export type  WORKSPACE_PERMISSIONS_UPDATED = typeof WORKSPACE_PERMISSIONS_UPDATE
 export const LOAD_WORKSPACES = "LOAD_WORKSPACES";
 export type LOAD_WORKSPACES = typeof LOAD_WORKSPACES;
 
-// Channel actions
-export const LOAD_CHANNEL = "GET_CHANNEL";
-export type LOAD_CHANNEL = typeof LOAD_CHANNEL;
+// Space actions
+export const LOAD_SPACE = "GET_SPACE";
+export type LOAD_SPACE = typeof LOAD_SPACE;
 
-export const CLEAR_CHANNEL = "CLEAR_CHANNEL";
-export type CLEAR_CHANNEL = typeof CLEAR_CHANNEL;
+export const CLEAR_SPACE = "CLEAR_SPACE";
+export type CLEAR_SPACE = typeof CLEAR_SPACE;
 
-export const PUT_CHANNEL = "PUT_CHANNEL";
-export type PUT_CHANNEL = typeof PUT_CHANNEL;
+export const PUT_SPACE = "PUT_SPACE";
+export type PUT_SPACE = typeof PUT_SPACE;
 
-export const PUT_CHANNELS = "PUT_CHANNELS";
-export type PUT_CHANNELS = typeof PUT_CHANNELS;
+export const PUT_SPACES = "PUT_SPACES";
+export type PUT_SPACES = typeof PUT_SPACES;
 
-export const PATCH_CHANNEL = "PATCH_CHANNEL";
-export type PATCH_CHANNEL = typeof PATCH_CHANNEL;
+export const PATCH_SPACE = "PATCH_SPACE";
+export type PATCH_SPACE = typeof PATCH_SPACE;
 
-export const CHANNEL_CREATED = "CHANNEL_CREATED";
-export type CHANNEL_CREATED = typeof CHANNEL_CREATED;
+export const SPACE_CREATED = "SPACE_CREATED";
+export type SPACE_CREATED = typeof SPACE_CREATED;
 
-export const CREATE_CHANNEL = "CREATE_CHANNEL";
-export type CREATE_CHANNEL = typeof CREATE_CHANNEL;
+export const CREATE_SPACE = "CREATE_SPACE";
+export type CREATE_SPACE = typeof CREATE_SPACE;
 
-export const DELETE_CHANNEL = "DELETE_CHANNEL";
-export type DELETE_CHANNEL = typeof DELETE_CHANNEL;
+export const DELETE_SPACE = "DELETE_SPACE";
+export type DELETE_SPACE = typeof DELETE_SPACE;
 
 export const LOAD_TOPICS = "LOAD_TOPICS";
 export type LOAD_TOPICS = typeof LOAD_TOPICS;
@@ -288,44 +288,51 @@ export type UPDATE_TOPIC = typeof UPDATE_TOPIC;
 export const DELETE_TOPIC = "DELETE_TOPIC";
 export type DELETE_TOPIC = typeof DELETE_TOPIC;
 
-export const UPDATE_CHANNEL = "UPDATE_CHANNEL";
-export type UPDATE_CHANNEL = typeof UPDATE_CHANNEL;
+export const UPDATE_SPACE = "UPDATE_SPACE";
+export type UPDATE_SPACE = typeof UPDATE_SPACE;
 
-export const JOIN_CHANNEL = "JOIN_CHANNEL";
-export type JOIN_CHANNEL = typeof JOIN_CHANNEL;
+export const JOIN_SPACE = "JOIN_SPACE";
+export type JOIN_SPACE = typeof JOIN_SPACE;
 
-export const PATCH_CHANNELS = "PATCH_CHANNELS";
-export type PATCH_CHANNELS = typeof PATCH_CHANNELS;
+export const PATCH_SPACES = "PATCH_SPACES";
+export type PATCH_SPACES = typeof PATCH_SPACES;
 
-export const REMOVE_CHANNEL = "REMOVE_CHANNEL";
-export type REMOVE_CHANNEL = typeof REMOVE_CHANNEL;
+export const REMOVE_SPACE = "REMOVE_SPACE";
+export type REMOVE_SPACE = typeof REMOVE_SPACE;
 
-export const FETCH_CHANNELS = "FETCH_CHANNELS";
-export type FETCH_CHANNELS = typeof FETCH_CHANNELS;
+export const FETCH_SPACES = "FETCH_SPACES";
+export type FETCH_SPACES = typeof FETCH_SPACES;
 
-export const ARCHIVE_CHANNEL = "ARCHIVE_CHANNEL";
-export type ARCHIVE_CHANNEL = typeof ARCHIVE_CHANNEL;
+export const ARCHIVE_SPACE = "ARCHIVE_SPACE";
+export type ARCHIVE_SPACE = typeof ARCHIVE_SPACE;
 
-export const UNARCHIVE_CHANNEL = "UNARCHIVE_CHANNEL";
-export type UNARCHIVE_CHANNEL = typeof UNARCHIVE_CHANNEL;
+export const UNARCHIVE_SPACE = "UNARCHIVE_SPACE";
+export type UNARCHIVE_SPACE = typeof UNARCHIVE_SPACE;
 
-export const CHANNEL_UPDATED = "CHANNEL_UPDATED";
-export type CHANNEL_UPDATED = typeof CHANNEL_UPDATED;
+export const SPACE_UPDATED = "SPACE_UPDATED";
+export type SPACE_UPDATED = typeof SPACE_UPDATED;
 
-export const CHANNEL_DELETED = "CHANNEL_DELETED";
-export type CHANNEL_DELETED = typeof CHANNEL_DELETED;
+export const SPACE_DELETED = "SPACE_DELETED";
+export type SPACE_DELETED = typeof SPACE_DELETED;
 
-export const CHANNEL_ARCHIVED = "CHANNEL_ARCHIVED";
-export type CHANNEL_ARCHIVED = typeof CHANNEL_ARCHIVED;
+export const SPACE_ARCHIVED = "SPACE_ARCHIVED";
+export type SPACE_ARCHIVED = typeof SPACE_ARCHIVED;
 
-export const CHANNEL_JOINED = "CHANNEL_JOINED";
-export type CHANNEL_JOINED = typeof CHANNEL_JOINED;
+export const SPACE_JOINED = "SPACE_JOINED";
+export type SPACE_JOINED = typeof SPACE_JOINED;
 
-export const LOAD_CHANNELS = "LOAD_CHANNELS ";
-export type LOAD_CHANNELS = typeof LOAD_CHANNELS ;
+export const LOAD_SPACES = "LOAD_SPACES ";
+export type LOAD_SPACES = typeof LOAD_SPACES ;
 
-export const CHANNEL_UNARCHIVED = "CHANNEL_UNARCHIVED";
-export type CHANNEL_UNARCHIVED = typeof CHANNEL_UNARCHIVED;
+export const SPACE_UNARCHIVED = "SPACE_UNARCHIVED";
+export type SPACE_UNARCHIVED = typeof SPACE_UNARCHIVED;
+
+// Board actions
+export const UPDATE_BOARD = "UPDATED_BOARD"
+export type UPDATE_BOARD = typeof UPDATE_BOARD
+
+export const BOARD_UPDATED = "BOARD_UPDATED"
+export type  BOARD_UPDATED = typeof BOARD_UPDATED
 
 // Column actions
 export const GET_COLUMN = "GET_COLUMN";
@@ -431,11 +438,11 @@ export type PATCH_CARDS = typeof PATCH_CARDS;
 export const REMOVE_CARD = "REMOVE_CARD";
 export type REMOVE_CARD = typeof REMOVE_CARD;
 
-export const TAG_CARD = "TAG_CARD";
-export type TAG_CARD = typeof TAG_CARD;
+export const LABEL_CARD = "LABEL_CARD";
+export type LABEL_CARD = typeof LABEL_CARD;
 
-export const UNTAG_CARD = "UNTAG_CARD";
-export type UNTAG_CARD = typeof UNTAG_CARD;
+export const UNLABEL_CARD = "UNLABEL_CARD";
+export type UNLABEL_CARD = typeof UNLABEL_CARD;
 
 export const FETCH_CARDS = "FETCH_CARDS";
 export type FETCH_CARDS = typeof FETCH_CARDS;
@@ -455,11 +462,11 @@ export type CLEAR_CARDS = typeof CLEAR_CARDS;
 export const CARD_CREATED = "CARD_CREATED";
 export type CARD_CREATED = typeof CARD_CREATED;
 
-export const CARD_TAGGED = "CARD_TAGGED";
-export type CARD_TAGGED = typeof CARD_TAGGED;
+export const CARD_LABELED = "CARD_LABELED";
+export type CARD_LABELED = typeof CARD_LABELED;
 
-export const CARD_UNTAGGED = "CARD_UNTAGGED";
-export type CARD_UNTAGGED = typeof CARD_UNTAGGED;
+export const CARD_UNLABELED = "CARD_UNLABELED";
+export type CARD_UNLABELED = typeof CARD_UNLABELED;
 
 export const CARD_ARCHIVED = "CARD_ARCHIVED";
 export type CARD_ARCHIVED = typeof CARD_ARCHIVED;
@@ -642,76 +649,76 @@ export type MEMBER_UPDATED = typeof MEMBER_UPDATED;
 export const MEMBER_LEFT = "MEMBER_LEFT";
 export type MEMBER_LEFT = typeof MEMBER_LEFT;
 
-// Channel Role
-export const GET_CHANNEL_ROLE = "GET_CHANNEL_ROLE";
-export type GET_CHANNEL_ROLE = typeof GET_CHANNEL_ROLE;
+// Space Role
+export const GET_SPACE_ROLE = "GET_SPACE_ROLE";
+export type GET_SPACE_ROLE = typeof GET_SPACE_ROLE;
 
-export const PATCH_CHANNEL_ROLE = "PATCH_CHANNEL_ROLE";
-export type PATCH_CHANNEL_ROLE = typeof PATCH_CHANNEL_ROLE;
+export const PATCH_SPACE_ROLE = "PATCH_SPACE_ROLE";
+export type PATCH_SPACE_ROLE = typeof PATCH_SPACE_ROLE;
 
-export const SET_DEFAULT_CHANNEL_ROLE = "SET_DEFAULT_CHANNEL_ROLE";
-export type SET_DEFAULT_CHANNEL_ROLE = typeof SET_DEFAULT_CHANNEL_ROLE;
+export const SET_DEFAULT_SPACE_ROLE = "SET_DEFAULT_SPACE_ROLE";
+export type SET_DEFAULT_SPACE_ROLE = typeof SET_DEFAULT_SPACE_ROLE;
 
-export const FETCH_CHANNEL_ROLES = "FETCH_CHANNEL_ROLES";
-export type FETCH_CHANNEL_ROLES = typeof FETCH_CHANNEL_ROLES;
+export const FETCH_SPACE_ROLES = "FETCH_SPACE_ROLES";
+export type FETCH_SPACE_ROLES = typeof FETCH_SPACE_ROLES;
 
-export const LOAD_CHANNEL_ROLES = "LOAD_CHANNEL_ROLES";
-export type LOAD_CHANNEL_ROLES = typeof LOAD_CHANNEL_ROLES;
+export const LOAD_SPACE_ROLES = "LOAD_SPACE_ROLES";
+export type LOAD_SPACE_ROLES = typeof LOAD_SPACE_ROLES;
 
-export const DELETE_CHANNEL_ROLE = "DELETE_CHANNEL_ROLE";
-export type DELETE_CHANNEL_ROLE = typeof DELETE_CHANNEL_ROLE;
+export const DELETE_SPACE_ROLE = "DELETE_SPACE_ROLE";
+export type DELETE_SPACE_ROLE = typeof DELETE_SPACE_ROLE;
 
-export const PUT_CHANNEL_ROLE = "PUT_CHANNEL_ROLE";
-export type PUT_CHANNEL_ROLE = typeof PUT_CHANNEL_ROLE;
+export const PUT_SPACE_ROLE = "PUT_SPACE_ROLE";
+export type PUT_SPACE_ROLE = typeof PUT_SPACE_ROLE;
 
-export const PUT_CHANNEL_ROLES = "PUT_CHANNEL_ROLES";
-export type PUT_CHANNEL_ROLES = typeof PUT_CHANNEL_ROLES;
+export const PUT_SPACE_ROLES = "PUT_SPACE_ROLES";
+export type PUT_SPACE_ROLES = typeof PUT_SPACE_ROLES;
 
-export const CREATE_CHANNEL_ROLE = "CREATE_CHANNEL_ROLE";
-export type CREATE_CHANNEL_ROLE = typeof CREATE_CHANNEL_ROLE;
+export const CREATE_SPACE_ROLE = "CREATE_SPACE_ROLE";
+export type CREATE_SPACE_ROLE = typeof CREATE_SPACE_ROLE;
 
-export const UPDATE_CHANNEL_ROLE = "UPDATE_CHANNEL_ROLE";
-export type UPDATE_CHANNEL_ROLE = typeof UPDATE_CHANNEL_ROLE;
+export const UPDATE_SPACE_PERMISSIONS = "UPDATE_SPACE_PERMISSIONS";
+export type UPDATE_SPACE_PERMISSIONS = typeof UPDATE_SPACE_PERMISSIONS;
 
-export const PATCH_CHANNEL_ROLES = "PATCH_CHANNEL_ROLES";
-export type PATCH_CHANNEL_ROLES = typeof PATCH_CHANNEL_ROLES;
+export const PATCH_SPACE_ROLES = "PATCH_SPACE_ROLES";
+export type PATCH_SPACE_ROLES = typeof PATCH_SPACE_ROLES;
 
-export const REMOVE_CHANNEL_ROLE = "REMOVE_CHANNEL_ROLE";
-export type REMOVE_CHANNEL_ROLE = typeof REMOVE_CHANNEL_ROLE;
+export const REMOVE_SPACE_ROLE = "REMOVE_SPACE_ROLE";
+export type REMOVE_SPACE_ROLE = typeof REMOVE_SPACE_ROLE;
 
-export const CHANNEL_ROLE_CREATED = "CHANNEL_ROLE_CREATED";
-export type CHANNEL_ROLE_CREATED = typeof CHANNEL_ROLE_CREATED;
+export const SPACE_ROLE_CREATED = "SPACE_ROLE_CREATED";
+export type SPACE_ROLE_CREATED = typeof SPACE_ROLE_CREATED;
 
-export const CHANNEL_ROLE_UPDATED = "CHANNEL_ROLE_UPDATED";
-export type CHANNEL_ROLE_UPDATED = typeof CHANNEL_ROLE_UPDATED;
+export const SPACE_ROLE_UPDATED = "SPACE_ROLE_UPDATED";
+export type SPACE_ROLE_UPDATED = typeof SPACE_ROLE_UPDATED;
 
-export const CHANNEL_ROLE_DELETED = "CHANNEL_ROLE_DELETED";
-export type CHANNEL_ROLE_DELETED = typeof CHANNEL_ROLE_DELETED;
+export const SPACE_ROLE_DELETED = "SPACE_ROLE_DELETED";
+export type SPACE_ROLE_DELETED = typeof SPACE_ROLE_DELETED;
 
 // Tag
-export const CREATE_TAG = "CREATE_TAG";
-export type CREATE_TAG = typeof CREATE_TAG;
+export const CREATE_LABEL = "CREATE_LABEL";
+export type CREATE_LABEL = typeof CREATE_LABEL;
 
-export const PUT_TAG = "PUT_TAG";
-export type PUT_TAG = typeof PUT_TAG;
+export const PUT_LABEL = "PUT_LABEL";
+export type PUT_LABEL = typeof PUT_LABEL;
 
-export const PUT_TAGS = "PUT_TAGS";
-export type PUT_TAGS = typeof PUT_TAGS;
+export const PUT_LABELS = "PUT_LABELS";
+export type PUT_LABELS = typeof PUT_LABELS;
 
-export const REMOVE_TAG = "REMOVE_TAG";
-export type REMOVE_TAG = typeof REMOVE_TAG;
+export const REMOVE_LABEL = "REMOVE_LABEL";
+export type REMOVE_LABEL = typeof REMOVE_LABEL;
 
-export const REMOVE_TAGS = "REMOVE_TAGS";
-export type REMOVE_TAGS = typeof REMOVE_TAGS;
+export const REMOVE_LABELS = "REMOVE_LABELS";
+export type REMOVE_LABELS = typeof REMOVE_LABELS;
 
-export const DELETE_TAG = "DELETE_TAG";
-export type DELETE_TAG = typeof DELETE_TAG;
+export const DELETE_LABEL = "DELETE_LABEL";
+export type DELETE_LABEL = typeof DELETE_LABEL;
 
-export const TAG_CREATED = "TAG_CREATED";
-export type TAG_CREATED = typeof TAG_CREATED;
+export const LABEL_CREATED = "LABEL_CREATED";
+export type LABEL_CREATED = typeof LABEL_CREATED;
 
-export const TAG_DELETED = "TAG_DELETED";
-export type TAG_DELETED = typeof TAG_DELETED;
+export const LABEL_DELETED = "LABEL_DELETED";
+export type LABEL_DELETED = typeof LABEL_DELETED;
 
 // Status
 

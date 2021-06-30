@@ -191,7 +191,7 @@ function* trash({ payload, meta }: DeleteColumnAction): Iterable<any> {
         meta.success(data);
         const params = {
             id: payload.column_id,
-            channel_id: payload.channel_id,
+            board_id: payload.board_id,
         };
         yield put(columnDeleted(params));
     } catch (e) {

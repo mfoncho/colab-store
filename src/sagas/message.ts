@@ -199,7 +199,7 @@ function* reacted({ payload }: UserReactedAction) : Iterable<any>{
                     id: message.id,
                     reactions: reactions,
                     thread_id: message.thread_id,
-                    channel_id: message.channel_id,
+                    space_id: message.space_id,
                 } as any;
                 yield put(patchMessage(partial));
             }
@@ -214,7 +214,7 @@ function* reacted({ payload }: UserReactedAction) : Iterable<any>{
                 id: message.id,
                 reactions: reactions,
                 thread_id: message.thread_id,
-                channel_id: message.channel_id,
+                space_id: message.space_id,
             } as any;
             yield put(patchMessage(partial));
         }
@@ -249,7 +249,7 @@ function* unreacted({ payload }: UserUnreactedAction) : Iterable<any>{
                 id: message.id,
                 reactions: reactions,
                 thread_id: message.thread_id,
-                channel_id: message.channel_id,
+                space_id: message.space_id,
             } as any;
             yield put(patchMessage(partial));
         }

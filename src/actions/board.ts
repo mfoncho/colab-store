@@ -1,6 +1,14 @@
-import { BelongsToChannel, Require, Unique } from "@colab/types";
-import { io } from "@colab/client";
+import { Require, Unique } from "@colab/types";
+import { BelongsToBoard, io } from "@colab/client";
 import {
+    LABEL_DELETED,
+    LABEL_CREATED,
+    CREATE_LABEL,
+    DELETE_LABEL,
+    REMOVE_LABEL,
+    JOIN_SPACE,
+    PUT_LABEL,
+    PUT_LABELS,
     MOVE_CARD,
     UNARCHIVE_CARD,
     ARCHIVE_COLUMN,
@@ -38,16 +46,16 @@ import {
     COLUMN_ARCHIVED,
     COLUMN_UNARCHIVED,
     GET_CARD,
-    CARD_TAGGED,
-    CARD_UNTAGGED,
+    CARD_LABELED,
+    CARD_UNLABELED,
     CARD_ARCHIVED,
     CARD_UNARCHIVED,
     DELETE_CARD,
     CARD_DONE,
     MARK_CARD_AS_DONE,
     MARK_CARD_AS_UNDONE,
-    TAG_CARD,
-    UNTAG_CARD,
+    LABEL_CARD,
+    UNLABEL_CARD,
     CREATE_TASK,
     UPDATE_TASK,
     DELETE_TASK,
@@ -74,6 +82,7 @@ import {
     FETCH_COLUMNS,
     DELETE_COLUMN,
     CLEAR_CARDS,
+    UPDATE_BOARD,
 } from "./types";
 
 import { Action, createAction, createIOAction, IOAction } from ".";
@@ -83,33 +92,42 @@ import {
     NormalizedColumn,
 } from "../schemas";
 
+export interface BelongsToSpace {
+    space_id: string;
+}
+
+export interface UpdateBoardPayload {
+    name: string;
+    icon?: string;
+}
+
 export interface GetCardPayload {
-    channel_id: string;
+    board_id: string;
     card_id?: string;
 }
 
 export interface CompleteTaskPayload {
     task_id: string;
-    channel_id: string;
+    board_id: string;
 }
 
 export interface UncompleteTaskPayload {
     task_id: string;
-    channel_id: string;
+    board_id: string;
 }
 
 export interface ClearCardPayload {
     id: string;
     thread_id: string;
     column_id: string | null;
-    channel_id: string;
+    board_id: string;
 }
 
 export interface CreateColumnPayload {
     name: string;
     origin: boolean;
     capacity: number;
-    channel_id: string;
+    board_id: string;
     type: "stack" | "queue";
 }
 
@@ -117,7 +135,7 @@ export interface UpdateColumnPayload {
     name?: string;
     origin?: boolean;
     column_id: string;
-    channel_id: string;
+    board_id: string;
     capacity?: number;
     type?: "stack" | "queue";
 }
@@ -125,27 +143,27 @@ export interface UpdateColumnPayload {
 export interface MoveColumnPayload {
     position: number;
     column_id: string;
-    channel_id: string;
+    board_id: string;
 }
 
 export interface ArchiveColumnPayload {
     column_id: string;
-    channel_id: string;
+    board_id: string;
 }
 
 export interface UnarchiveColumnPayload {
     column_id: string;
-    channel_id: string;
+    board_id: string;
 }
 
 export interface DeleteColumnPayload {
-    channel_id: string;
+    board_id: string;
     column_id: string;
 }
 
 export interface CreateTaskPayload {
     name: string;
-    channel_id: string;
+    board_id: string;
     card_id: string;
     checklist_id: string;
 }
@@ -155,31 +173,31 @@ export interface UpdateTaskPayload {
     complete?: boolean;
     task_id: string;
     card_id: string;
-    channel_id: string;
+    board_id: string;
     checklist_id: string;
 }
 
 export interface DeleteTaskPayload {
     task_id: string;
     card_id: string;
-    channel_id: string;
+    board_id: string;
     checklist_id: string;
 }
 
 export interface FetchCardsPayload {
-    channel_id: string;
+    board_id: string;
     column_id?: string;
 }
 
 export interface FetchColumnsPayload {
-    channel_id: string;
+    board_id: string;
 }
 
 export interface MoveCardPayload {
     card_id: string;
     position?: number;
     column_id: string;
-    channel_id: string;
+    board_id: string;
 }
 
 export interface CardPosition {
@@ -189,7 +207,7 @@ export interface CardPosition {
 }
 
 export interface DeleteCardPayload {
-    channel_id: string;
+    board_id: string;
     card_id: string;
 }
 
@@ -202,20 +220,20 @@ export interface UpdateCardPayload {
     name?: string;
     card_id: string;
     deadline?: string | null;
-    channel_id: string;
+    board_id: string;
     description?: string | null;
 }
 
 export interface CreateCardPayload {
     name: string;
     column_id: string;
-    channel_id: string;
+    board_id: string;
     description: string;
 }
 
 export interface ArchiveCardPayload {
     card_id: string;
-    channel_id: string;
+    board_id: string;
 }
 
 export interface UnarchiveCardPayload extends ArchiveCardPayload {
@@ -224,60 +242,69 @@ export interface UnarchiveCardPayload extends ArchiveCardPayload {
 
 export interface MarkCardAsDonePayload {
     card_id: string;
-    channel_id: string;
+    board_id: string;
 }
 
 export interface MarkCardAsUndonePayload {
     card_id: string;
-    channel_id: string;
+    board_id: string;
 }
 
-export interface TagCardPayload {
-    tag_id: string;
+export interface LabelCardPayload {
+    label_id: string;
     card_id: string;
-    channel_id: string;
+    board_id: string;
 }
 
-export interface UntagCardPayload {
-    tag_id: string;
+export interface UnlabelCardPayload {
+    label_id: string;
     card_id: string;
-    channel_id: string;
+    board_id: string;
 }
 
 export interface CreateChecklistPayload {
     name: string;
     card_id: string;
     member_id: string;
-    channel_id: string;
+    board_id: string;
 }
 
 export interface UpdateChecklistPayload {
-    name?: string;
-    card_id: string;
-    member_id?: string;
-    channel_id: string;
+    name: string;
+    board_id: string;
     checklist_id: string;
 }
 
 export interface DeleteChecklistPayload {
     card_id: string;
-    channel_id: string;
+    board_id: string;
     checklist_id: string;
 }
 
 export interface LoadColumnsPayload {
-    channel_id: string;
+    board_id: string;
 }
 
 export interface LoadCardsPayload {
-    channel_id: string;
+    board_id: string;
+}
+
+export interface CreateLabelPayload {
+    board_id: string;
+    name: string;
+    color: string;
+}
+
+export interface DeleteLabelPayload {
+    board_id: string;
+    label_id: string;
 }
 
 export interface RemoveChecklistPayload extends Unique {}
 
-export type CardUntaggedPayload = Require<
-    Partial<io.CardTag>,
-    "card_id" | "tag_id"
+export type CardUnlabeledPayload = Require<
+    Partial<io.CardLabel>,
+    "card_id" | "label_id"
 >;
 
 export type TaskDeletedPayload = Require<
@@ -291,6 +318,23 @@ export type ChecklistDeletedPayload = Require<
 >;
 
 export interface UnarchiveColumnPayload extends ArchiveColumnPayload {}
+
+export type RemoveLabelPayload = Require<Partial<io.Label>, "id" | "board_id">;
+
+export type RemoveLabelsPayload = RemoveLabelPayload[];
+
+export type LabelCreatedAction = Action<LABEL_CREATED, io.Label>;
+export type LabelDeletedAction = Action<LABEL_DELETED, Unique & BelongsToSpace>;
+export type RemoveLabelAction = Action<REMOVE_LABEL, RemoveLabelPayload>;
+export type RemoveLabelsAction = Action<REMOVE_LABEL, RemoveLabelPayload[]>;
+export type PutLabelAction = Action<PUT_LABEL, io.Label>;
+export type PutLabelsAction = Action<PUT_LABELS, io.Label[]>;
+export type CreateLabelAction = IOAction<
+    CREATE_LABEL,
+    CreateLabelPayload,
+    io.Label
+>;
+export type DeleteLabelAction = IOAction<DELETE_LABEL, DeleteLabelPayload, any>;
 
 export type PutChecklistAction = Action<PUT_CHECKLIST, NormalizedChecklist>;
 
@@ -308,6 +352,12 @@ export type ChecklistCreatedAction = Action<CHECKLIST_CREATED, io.Checklist>;
 export type ChecklistDeletedAction = Action<
     CHECKLIST_DELETED,
     ChecklistDeletedPayload
+>;
+
+export type UpdateBoardAction = IOAction<
+    UPDATE_BOARD,
+    UpdateBoardPayload,
+    io.Board
 >;
 
 export type CompleteTaskAction = IOAction<
@@ -383,9 +433,9 @@ export type StoreCardsAction = Action<STORE_CARDS, io.Card[]>;
 
 export type CardCreatedAction = Action<CARD_CREATED, io.Card>;
 
-export type CardTaggedAction = Action<CARD_TAGGED, io.CardTag>;
+export type CardLabeledAction = Action<CARD_LABELED, io.CardLabel>;
 
-export type CardUntaggedAction = Action<CARD_UNTAGGED, CardUntaggedPayload>;
+export type CardUnlabeledAction = Action<CARD_UNLABELED, CardUnlabeledPayload>;
 
 export type CardDeletedAction = Action<CARD_DELETED, Unique>;
 
@@ -437,9 +487,17 @@ export type FetchColumnsAction = IOAction<
     io.Column[]
 >;
 
-export type TagCardAction = IOAction<TAG_CARD, TagCardPayload, io.CardTag>;
+export type LabelCardAction = IOAction<
+    LABEL_CARD,
+    LabelCardPayload,
+    io.CardLabel
+>;
 
-export type UntagCardAction = IOAction<UNTAG_CARD, UntagCardPayload, string>;
+export type UnlabelCardAction = IOAction<
+    UNLABEL_CARD,
+    UnlabelCardPayload,
+    string
+>;
 
 export type GetCardAction = IOAction<GET_CARD, GetCardPayload, io.Card>;
 
@@ -475,7 +533,7 @@ export type ColumnCreateAction = Action<COLUMN_CREATED, io.Column>;
 
 export type ColumnDeletedAction = Action<
     COLUMN_DELETED,
-    Unique & BelongsToChannel
+    Unique & { board_id: string }
 >;
 
 export type ColumnUpdatedAction = Action<COLUMN_UPDATED, io.Column>;
@@ -546,6 +604,10 @@ export function fetchColumns(payload: FetchColumnsPayload): FetchColumnsAction {
 
 export function loadCards(payload: LoadCardsPayload): LoadCardsAction {
     return createIOAction<io.Card[], LOAD_CARDS>(LOAD_CARDS, payload);
+}
+
+export function updateBoard(payload: UpdateBoardPayload): UpdateBoardAction {
+    return createIOAction<io.Board, UPDATE_BOARD>(UPDATE_BOARD, payload);
 }
 
 export function loadColumns(payload: LoadColumnsPayload): LoadColumnsAction {
@@ -675,12 +737,12 @@ export function taskDeleted(payload: TaskDeletedPayload): TaskDeletedAction {
     return createAction(TASK_DELETED, payload);
 }
 
-export function tagCard(payload: TagCardPayload): TagCardAction {
-    return createIOAction<io.CardTag, TAG_CARD>(TAG_CARD, payload);
+export function labelCard(payload: LabelCardPayload): LabelCardAction {
+    return createIOAction<io.CardLabel, LABEL_CARD>(LABEL_CARD, payload);
 }
 
-export function untagCard(payload: UntagCardPayload): UntagCardAction {
-    return createIOAction<string, UNTAG_CARD>(UNTAG_CARD, payload);
+export function unlabelCard(payload: UnlabelCardPayload): UnlabelCardAction {
+    return createIOAction<string, UNLABEL_CARD>(UNLABEL_CARD, payload);
 }
 
 export function getCard(payload: GetCardPayload): GetCardAction {
@@ -777,12 +839,14 @@ export function cardsReordered(payload: CardPosition[]): CardsReorderedAction {
     return createAction(CARDS_REORDERED, payload);
 }
 
-export function cardTagged(payload: io.CardTag): CardTaggedAction {
-    return createAction(CARD_TAGGED, payload);
+export function cardLabeled(payload: io.CardLabel): CardLabeledAction {
+    return createAction(CARD_LABELED, payload);
 }
 
-export function cardUntagged(payload: CardUntaggedPayload): CardUntaggedAction {
-    return createAction(CARD_UNTAGGED, payload);
+export function cardUnlabeled(
+    payload: CardUnlabeledPayload
+): CardUnlabeledAction {
+    return createAction(CARD_UNLABELED, payload);
 }
 
 export function archiveCard(payload: ArchiveCardPayload): ArchiveCardAction {
@@ -803,9 +867,9 @@ export function removeColumn(id: string): RemoveColumnAction {
 }
 
 export function columnDeleted(
-    channel: Unique & BelongsToChannel
+    column: Unique & BelongsToBoard
 ): ColumnDeletedAction {
-    return createAction(COLUMN_DELETED, channel);
+    return createAction(COLUMN_DELETED, column);
 }
 
 export function columnUnarchived(column: io.Column): ColumnUnarchivedAction {
@@ -879,4 +943,36 @@ export function unarchiveColumn(
         UNARCHIVE_COLUMN,
         payload
     );
+}
+
+// Label
+
+export function createLabel(payload: CreateLabelPayload): CreateLabelAction {
+    return createIOAction<io.Label, CREATE_LABEL>(CREATE_LABEL, payload);
+}
+
+export function deleteLabel(payload: DeleteLabelPayload): DeleteLabelAction {
+    return createIOAction<any, DELETE_LABEL>(DELETE_LABEL, payload);
+}
+
+export function labelCreated(label: io.Label): LabelCreatedAction {
+    return createAction(LABEL_CREATED, label);
+}
+
+export function labelDeleted(
+    label: Unique & BelongsToSpace
+): LabelDeletedAction {
+    return createAction(LABEL_DELETED, label);
+}
+
+export function putLabel(label: io.Label): PutLabelAction {
+    return createAction(PUT_LABEL, label);
+}
+
+export function putLabels(label: io.Label[]): PutLabelsAction {
+    return createAction(PUT_LABELS, label);
+}
+
+export function removeLabel(label: RemoveLabelPayload): RemoveLabelAction {
+    return createAction(REMOVE_LABEL, label);
 }

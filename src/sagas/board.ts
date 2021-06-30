@@ -2,8 +2,8 @@ import { takeEvery } from "redux-saga/effects";
 import { socket } from "@colab/client";
 import { io } from "@colab/client";
 import { dispatch } from "..";
-import { PUT_CHANNEL, PUT_CHANNELS } from "../actions/types";
-import { PutChannelAction, PutChannelsAction } from "../actions/channel";
+import { PUT_SPACE, PUT_SPACES } from "../actions/types";
+import { PutSpaceAction, PutSpacesAction } from "../actions/space";
 import {
     cardCreated,
     cardUpdated,
@@ -20,13 +20,13 @@ import {
     taskDeleted,
     cardsReordered,
     columnsReordered,
-    cardTagged,
-    cardUntagged,
+    cardLabeled,
+    cardUnlabeled,
 } from "../actions/board";
 
 function* subscribe({
     payload,
-}: PutChannelAction | PutChannelsAction): Iterable<any> {
+}: PutSpaceAction | PutSpacesAction): Iterable<any> {
     if (!Array.isArray(payload)) {
         payload = [payload];
     }
@@ -118,12 +118,12 @@ function* subscribe({
             dispatch(taskDeleted(payload));
         });
 
-        ch.on("card.tagged", (payload: io.CardTag) => {
-            dispatch(cardTagged(payload));
+        ch.on("card.tagged", (payload: io.CardLabel) => {
+            dispatch(cardLabeled(payload));
         });
 
-        ch.on("card.untagged", (payload: io.CardTag) => {
-            dispatch(cardUntagged(payload));
+        ch.on("card.untagged", (payload: io.CardLabel) => {
+            dispatch(cardUnlabeled(payload));
         });
 
         ch.on("cards.reordered", ({ cards }: { cards: io.Card[] }) => {
@@ -141,6 +141,6 @@ function* subscribe({
 }
 
 export const tasks = [
-    { effect: takeEvery, type: PUT_CHANNEL, handler: subscribe },
-    { effect: takeEvery, type: PUT_CHANNELS, handler: subscribe },
+    { effect: takeEvery, type: PUT_SPACE, handler: subscribe },
+    { effect: takeEvery, type: PUT_SPACES, handler: subscribe },
 ];

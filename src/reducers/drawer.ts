@@ -22,7 +22,7 @@ export const reducers = {
 		return state.set('workspace', payload);
 	},
 
-	SET_CHANNELS_DRAWER(state: Drawer, { payload }: any){
+	SET_SPACES_DRAWER(state: Drawer, { payload }: any){
 		return state.set('channels', payload);
 	},
 };

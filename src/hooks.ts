@@ -9,11 +9,10 @@ import {
     Presence,
     CardRecord,
     ChecklistRecord,
-    TagRecord,
     ThreadRecord,
     UserRecord,
-    ChannelRecord,
-    ChannelRoleRecord,
+    SpaceRecord,
+    SpaceRoleRecord,
     MemberRecord,
 } from "./records";
 
@@ -27,11 +26,11 @@ const defaultUser = new UserRecord();
 
 const defaultPresence = new Presence();
 
-const defaultChannels = Map<string, ChannelRecord>();
+const defaultSpaces = Map<string, SpaceRecord>();
 
 const defaultMembers = OrderedMap<string, MemberRecord>();
 
-const defaultRoles = OrderedMap<string, ChannelRoleRecord>();
+const defaultRoles = OrderedMap<string, SpaceRoleRecord>();
 
 const defaultCards = Map<string, OrderedMap<string, CardRecord>>();
 
@@ -39,15 +38,15 @@ export function usePreferences() {
     return useSelector(selector.preferences);
 }
 
-export function useTopics(id: string) {
+export function useTopics(space_id: string) {
     const selector = useCallback(
         ({ threads }: State) => {
-            const ths = threads.entities.get(id);
+            const ths = threads.entities.get(space_id);
             if (ths) {
-                return ths.get("main");
+                return ths.get("topic");
             }
         },
-        [id]
+        [space_id]
     );
     return useSelector(selector);
 }
@@ -79,8 +78,8 @@ export function useStatus(id?: string) {
     return useSelector(selector);
 }
 
-export function useWorkspaces() {
-    return useSelector(selector.workspaces);
+export function useWorkspace() {
+    return useSelector(selector.workspace);
 }
 
 export function useStatuses() {
@@ -143,21 +142,12 @@ export function useThread(id: string, prop?: string) {
 export function useCards(id?: string) {
     const selector = useCallback(
         ({ cards, route }: State) => {
-            id = id ? id : route.params.get("channel_id");
+            id = id ? id : route.params.get("space_id");
             return cards.entities.get(id as any);
         },
         [id]
     );
     return useSelector(selector);
-}
-
-export function usePersonalWorkspace() {
-    const workspaces = useSelector(selector.workspaces);
-    return workspaces.get("@personal");
-}
-
-export function useSite() {
-    return useSelector(selector.site);
 }
 
 export function useConfig() {
@@ -209,7 +199,7 @@ export function useThreads(id?: string) {
             if (id) {
                 return threads.entities.get(id);
             } else {
-                return threads.entities.get(route.params.get("channel_id"));
+                return threads.entities.get(route.params.get("space_id"));
             }
         },
         [id]
@@ -217,7 +207,7 @@ export function useThreads(id?: string) {
     return useSelector(selector);
 }
 
-export function useAuth(){
+export function useAuth() {
     return useSelector(selector.auth);
 }
 
@@ -264,12 +254,8 @@ export function useViewer() {
     };
 }
 
-export function useChannelMembers() {
+export function useSpaceMembers() {
     return emptyarr;
-}
-
-export function useWorkspace() {
-    return useSelector(selector.workspace);
 }
 
 export function useMessage(id: string) {
@@ -282,52 +268,35 @@ export function useMessage(id: string) {
     return useSelector(selector);
 }
 
-export function useChannel(id?: string) {
+export function useSpace(id?: string) {
     const select = useCallback(
         id
-            ? ({ channels }: State) => {
-                  let path = channels.paths.get(id!);
-                  if (path) {
-                      let [workspace_id, channel_id] = path;
-                      return channels.entities
-                          .get(workspace_id)
-                          ?.get(channel_id);
-                  }
+            ? ({ spaces }: State) => {
+                  return spaces.get(id);
               }
-            : selector.channel,
+            : selector.space,
         [id]
     );
     return useSelector(select);
 }
 
-export function useWorkspaceChannels(id: string) {
-    const select = useCallback(
-        ({ channels }: State) => {
-            return channels.entities.get(id, defaultChannels);
-        },
-
-        [id]
-    );
-    return useSelector(select);
+export function useSpaces() {
+    return useSelector(selector.spaces);
 }
 
-export function useChannels() {
-    return useSelector(selector.channels);
-}
-
-export function useDirectChannels() {
-    const channels = useSelector(selector.directChannels);
+export function useDirectSpaces() {
+    const channels = useSelector(selector.directSpaces);
     if (channels) {
         return channels;
     } else {
-        return defaultChannels;
+        return defaultSpaces;
     }
 }
 
 export function useColumns(id?: string) {
     const selector = useCallback(
         ({ columns, route }: State) => {
-            id = id ? id : route.params.get("channel_id");
+            id = id ? id : route.params.get("space_id");
             return columns.entities.get(id as any);
         },
         [id]
@@ -348,16 +317,8 @@ export function useCard(id: string) {
     return useSelector(selector);
 }
 
-export function useTags() {
-    const channel = useChannel();
-    return channel ? channel.tags : (defaultList as List<TagRecord>);
-}
-
-export function useCardTags(card: CardRecord) {
-    const tags = useTags();
-    return card.tags
-        .map((ctag) => tags.find((tag: any) => tag.id === ctag.tag_id))
-        .filter(Boolean) as List<TagRecord>;
+export function useLabels() {
+    return [];
 }
 
 export function useCardChecklists(id: string): Map<string, ChecklistRecord> {
@@ -370,12 +331,14 @@ export function useCardChecklists(id: string): Map<string, ChecklistRecord> {
     return useSelector(selector);
 }
 
-export function useWorkspacePermission() {
-    const workspace = useWorkspace();
-    return workspace?.role.permissions;
-}
-
-export function useChannelPermission() {
-    const channel = useChannel();
-    return channel!.permissions;
+export function useSpacePermission() {
+    const space = useSpace();
+    const { permissions, role_id } = useAuth();
+    if (space) {
+        const custom = space.roles.find((role) => role.role_id == role_id);
+        if (custom) {
+            return permissions.merge(custom.permissions);
+        }
+    }
+    return permissions;
 }

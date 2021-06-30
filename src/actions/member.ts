@@ -3,12 +3,10 @@ import { NormalizedMember } from "../schemas";
 import { IOAction, createIOAction, createAction, Action } from "./index";
 import {
     CREATE_MEMBER,
-    UPDATE_MEMBER,
-    MEMBER_LEFT,    
+    MEMBER_LEFT,
     FETCH_MEMBERS,
     DELETE_MEMBER,
     MEMBER_JOINED,
-    MEMBER_UPDATED,
     LOAD_MEMBERS,
     PUT_MEMBER,
     PUT_MEMBERS,
@@ -18,39 +16,27 @@ import {
 } from "./types";
 
 export interface CreateMemberPayload {
-    channel_id: string;
-    membership_id: string;
+    space_id: string;
+    user_id: string;
     role_id?: string;
 }
 
-export interface UpdateMemberPayload {
-    member_id: string;
-    role_id: string;
-    channel_id: string;
-}
-
 export interface DeleteMemberPayload {
-    channel_id: string;
+    space_id: string;
     member_id: string;
 }
 export interface RemoveMemberPayload {
     id: string;
-    channel_id: string;
+    space_id: string;
 }
 
 export interface FetchMembersPayload {
-    channel_id: string;
+    space_id: string;
 }
 
 export type CreateMemberAction = IOAction<
     CREATE_MEMBER,
     CreateMemberPayload,
-    io.Member
->;
-
-export type UpdateMemberAction = IOAction<
-    UPDATE_MEMBER,
-    UpdateMemberPayload,
     io.Member
 >;
 
@@ -73,8 +59,6 @@ export type LoadMembersAction = IOAction<
 >;
 
 export type MemberJoinedAction = Action<MEMBER_JOINED, io.Member>;
-
-export type MemberUpdatedAction = Action<MEMBER_UPDATED, io.Member>;
 
 export type MemberLeftAction = Action<MEMBER_LEFT, io.Member>;
 
@@ -100,20 +84,12 @@ export function createMember(payload: CreateMemberPayload): CreateMemberAction {
     return createIOAction<io.Member, CREATE_MEMBER>(CREATE_MEMBER, payload);
 }
 
-export function updateMember(payload: UpdateMemberPayload): UpdateMemberAction {
-    return createIOAction(UPDATE_MEMBER, payload);
-}
-
 export function deleteMember(payload: DeleteMemberPayload): DeleteMemberAction {
     return createIOAction<any, DELETE_MEMBER>(DELETE_MEMBER, payload);
 }
 
 export function memberJoined(member: io.Member): MemberJoinedAction {
     return createAction(MEMBER_JOINED, member);
-}
-
-export function memberUpdated(member: io.Member): MemberUpdatedAction {
-    return createAction(MEMBER_UPDATED, member);
 }
 
 export function memberLeft(member: io.Member): MemberLeftAction {

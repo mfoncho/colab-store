@@ -9,6 +9,16 @@ const user: Relation<"user_id", string> = Schema.belongsTo("user", "user_id");
 
 const author: Relation<"user_id", string> = Schema.belongsTo("user", "user_id");
 
+const board: Relation<"board_id", string> = Schema.belongsTo(
+    "board",
+    "board_id"
+);
+
+const topic: Relation<"topic_id", string> = Schema.belongsTo(
+    "topic",
+    "topic_id"
+);
+
 const status: Relation<"status_id", string> = Schema.belongsTo(
     "status",
     "status_id"
@@ -20,6 +30,11 @@ const reactions: Relation<"reactions", string> = Schema.mapMany(
 );
 
 const users: Relation<"users", string> = Schema.belongsToMany("user", "users");
+
+const SpaceStruct = {
+    board: board,
+    topic: topic,
+};
 
 const UsersReactionStruct = {
     users: users,
@@ -59,17 +74,11 @@ const MemberStruct = {
     user: user,
 };
 
-const MembershipStruct = {
-    user: user,
-};
-
-const WorkspaceStruct = {};
-
-const UserChannelStruct = {
-    users: users,
-};
-
-const UserWorkspaceStruct = {};
+export const SpaceSchema = Schema.create<
+    io.Space,
+    typeof SpaceStruct,
+    "spaces"
+>(SpaceStruct, "space", "spaces");
 
 export const ReactionSchema = Schema.create<
     io.Reaction,
@@ -94,18 +103,6 @@ export const ThreadSchema = Schema.create<
     typeof ThreadStruct,
     "threads"
 >(ThreadStruct, "thread", "threads");
-
-export const UserChannelSchema = Schema.create<
-    io.UserChannel,
-    typeof UserChannelStruct,
-    "channels"
->(UserChannelStruct, "channel", "channels");
-
-export const UserWorkspaceSchema = Schema.create<
-    io.UserWorkspace,
-    typeof UserWorkspaceStruct,
-    "workspaces"
->(WorkspaceStruct, "workspace", "workspaces");
 
 export const CardSchema = Schema.create<io.Card, typeof CardStruct, "cards">(
     CardStruct,
@@ -143,12 +140,6 @@ export const MemberSchema = Schema.create<
     "members"
 >(MemberStruct, "member", "members");
 
-export const MembershipSchema = Schema.create<
-    io.Membership,
-    typeof MembershipStruct,
-    "memberships"
->(MembershipStruct, "membership", "memberships");
-
 export type NormalizedThread = ReturnType<
     typeof ThreadSchema["normalizeOne"]
 >[0];
@@ -161,20 +152,10 @@ export type NormalizedChecklist = ReturnType<
     typeof ChecklistSchema["normalizeOne"]
 >[0];
 
-export type NormalizedMembership = ReturnType<
-    typeof MembershipSchema["normalizeOne"]
->[0];
+export type NormalizedSpace = ReturnType<typeof SpaceSchema["normalizeOne"]>[0];
 
 export type NormalizedMember = ReturnType<
     typeof MemberSchema["normalizeOne"]
->[0];
-
-export type NormalizedUserWorkspace = ReturnType<
-    typeof UserWorkspaceSchema["normalizeOne"]
->[0];
-
-export type NormalizedUserChannel = ReturnType<
-    typeof UserChannelSchema["normalizeOne"]
 >[0];
 
 export type NormalizedColumn = ReturnType<
@@ -192,10 +173,8 @@ export type NormalizedRelated = {
     [CardSchema.collect]?: RelatedRecord<NormalizedCard>;
     [ColumnSchema.collect]?: RelatedRecord<NormalizedColumn>;
     [ThreadSchema.collect]?: RelatedRecord<NormalizedThread>;
-    [MessageSchema.collect]?: RelatedRecord<NormalizedUserChannel>;
+    [MessageSchema.collect]?: RelatedRecord<NormalizedMessage>;
     [ChecklistSchema.collect]?: RelatedRecord<NormalizedChecklist>;
-    [UserChannelSchema.collect]?: RelatedRecord<NormalizedUserChannel>;
     [MemberSchema.collect]?: RelatedRecord<NormalizedMember>;
-    [UserWorkspaceSchema.collect]?: RelatedRecord<NormalizedUserWorkspace>;
-    [MembershipSchema.collect]?: RelatedRecord<NormalizedMembership>;
+    [SpaceSchema.collect]?: RelatedRecord<NormalizedSpace>;
 };

@@ -13,8 +13,8 @@ import {
     CARD_ARCHIVED,
     CARD_UNARCHIVED,
     CARDS_REORDERED,
-    CARD_TAGGED,
-    CARD_UNTAGGED,
+    CARD_LABELED,
+    CARD_UNLABELED,
     STORE_CARDS,
     CARD_DONE,
     DELETE_CARD,
@@ -23,9 +23,9 @@ import {
     MARK_CARD_AS_DONE,
     MARK_CARD_AS_UNDONE,
     UPDATE_CARD,
-    TAG_CARD,
+    LABEL_CARD,
     STORE_CARD,
-    UNTAG_CARD,
+    UNLABEL_CARD,
 } from "../actions/types";
 import { CardSchema } from "../schemas";
 import {
@@ -44,8 +44,8 @@ import {
     MoveCardAction,
     putCards,
     FetchCardsAction,
-    CardTaggedAction,
-    CardUntaggedAction,
+    CardLabeledAction,
+    CardUnlabeledAction,
     CardArchivedAction,
     cardCreated,
     DeleteCardAction,
@@ -58,11 +58,11 @@ import {
     MarkCardAsDoneAction,
     cardUpdated,
     UpdateCardAction,
-    TagCardAction,
-    UntagCardAction,
+    LabelCardAction,
+    UnlabelCardAction,
     LoadCardsAction,
-    cardTagged,
-    cardUntagged,
+    cardLabeled,
+    cardUnlabeled,
     storeCards,
     fetchCards,
 } from "../actions/board";
@@ -204,7 +204,7 @@ function* patch({
     }
 }
 
-function* tagged({ payload }: CardTaggedAction): Iterable<any> {
+function* labeled({ payload }: CardLabeledAction): Iterable<any> {
     const { cards } = ((yield select()) as any) as State;
     const path = cards.paths.get(payload.card_id);
 
@@ -213,12 +213,16 @@ function* tagged({ payload }: CardTaggedAction): Iterable<any> {
             .get(path[0])!
             .get(path[1])!
             .get(payload.card_id)!;
-        if (!Boolean(card.tags.find((tag) => tag.get("id") == payload.id))) {
-            const tags = card.tags.toJS().concat(payload) as typeof payload[];
+        if (
+            !Boolean(card.labels.find((label) => label.get("id") == payload.id))
+        ) {
+            const labels = card.labels
+                .toJS()
+                .concat(payload) as typeof payload[];
 
             let params = {
                 id: payload.card_id,
-                tags: tags,
+                labels: labels,
             };
 
             yield put(patchCard(params));
@@ -226,7 +230,7 @@ function* tagged({ payload }: CardTaggedAction): Iterable<any> {
     }
 }
 
-function* untagged({ payload }: CardUntaggedAction): Iterable<any> {
+function* unlabeled({ payload }: CardUnlabeledAction): Iterable<any> {
     const { cards } = ((yield select()) as any) as State;
     const path = cards.paths.get(payload.card_id);
 
@@ -235,12 +239,12 @@ function* untagged({ payload }: CardUntaggedAction): Iterable<any> {
             .get(path[0])!
             .get(path[1])!
             .get(payload.card_id)!;
-        const tags = (card.tags
-            .filter((tag) => tag.tag_id !== payload.tag_id)
-            .toJS() as any) as io.CardTag[];
+        const labels = (card.labels
+            .filter((label) => label.label_id !== payload.label_id)
+            .toJS() as any) as io.CardLabel[];
         let params = {
             id: payload.card_id,
-            tags: tags,
+            labels: labels,
         };
         yield put(patchCard(params));
     }
@@ -310,21 +314,21 @@ function* unarchive({ payload, meta }: UnarchiveCardAction): Iterable<any> {
     }
 }
 
-function* tag({ payload, meta }: TagCardAction): Iterable<any> {
+function* label({ payload, meta }: LabelCardAction): Iterable<any> {
     try {
-        const { data } = (yield Client.tagCard(payload)) as any;
+        const { data } = (yield Client.labelCard(payload)) as any;
         meta.success(data);
-        yield put(cardTagged(data));
+        yield put(cardLabeled(data));
     } catch (e) {
         meta.error(e.toString());
     }
 }
 
-function* untag({ payload, meta }: UntagCardAction): Iterable<any> {
+function* unlabel({ payload, meta }: UnlabelCardAction): Iterable<any> {
     try {
-        const { data } = (yield Client.untagCard(payload)) as any;
+        const { data } = (yield Client.unlabelCard(payload)) as any;
         meta.success(data);
-        yield put(cardUntagged(payload));
+        yield put(cardUnlabeled(payload));
     } catch (e) {
         meta.error(e.toString());
     }
@@ -365,17 +369,17 @@ export const tasks = [
 
     { effect: takeEvery, type: CARD_UNARCHIVED, handler: store },
 
-    { effect: takeEvery, type: CARD_TAGGED, handler: tagged },
+    { effect: takeEvery, type: CARD_LABELED, handler: labeled },
 
     { effect: takeEvery, type: CARDS_REORDERED, handler: patch },
 
     { effect: takeEvery, type: UPDATE_CARD, handler: update },
 
-    { effect: takeEvery, type: TAG_CARD, handler: tag },
+    { effect: takeEvery, type: LABEL_CARD, handler: label },
 
-    { effect: takeEvery, type: UNTAG_CARD, handler: untag },
+    { effect: takeEvery, type: UNLABEL_CARD, handler: unlabel },
 
-    { effect: takeEvery, type: CARD_UNTAGGED, handler: untagged },
+    { effect: takeEvery, type: CARD_UNLABELED, handler: unlabeled },
 
     { effect: takeEvery, type: FETCH_CARDS, handler: fetch },
 ];

@@ -1,11 +1,15 @@
-import { Map, List, OrderedMap } from "immutable";
+import { OrderedMap } from "immutable";
 import { State } from "./index";
 import { MemberRecord } from "./records";
 
 const defaultMembers = OrderedMap<string, MemberRecord>();
 
-export function site({ site }: State) {
-    return site;
+export function permissions({ auth: { permissions } }: State) {
+    return permissions;
+}
+
+export function role({ auth: { role_id }, roles }: State) {
+    return roles.get(role_id)!;
 }
 
 export function config({ config }: State) {
@@ -29,46 +33,41 @@ export function preferences({ preferences }: State) {
 }
 
 export function cards({ cards, route }: State) {
-    return cards.entities.get(route.params.get("channel_id"));
+    return cards.entities.get(route.params.get("board_id"));
 }
 
 export function columns({ columns, route }: State) {
-    return columns.entities.get(route.params.get("channel_id"));
+    return columns.entities.get(route.params.get("board_id"));
 }
 
 export function roles({ roles, route }: State) {
-    return roles.get(route.params.get("channel_id"));
+    return roles.get(route.params.get("space_id"));
 }
 
-export function workspaces({ workspaces }: State) {
-    return workspaces;
+export function workspace({ workspace }: State) {
+    return workspace;
 }
 
 export function members({
     members,
     route,
 }: State): OrderedMap<string, MemberRecord> {
-    return members.get(route.params.get("channel_id"), defaultMembers);
+    return members.get(route.params.get("space_id"), defaultMembers);
 }
 
-export function workspace({ workspaces, route }: State) {
-    return workspaces.get(route.params.get("workspace_id"));
-}
-
-export function channel({ channels, route }: State) {
-    let path = channels.paths.get(route.params.get("channel_id"));
-    if (path) {
-        let [workspace_id, channel_id] = path;
-        return channels.entities.get(workspace_id)?.get(channel_id);
+export function space({ spaces, route }: State) {
+    let space_id = route.params.get("space_id");
+    if (space_id) {
+        return spaces.get(space_id);
     }
 }
 
-export function directChannels({ channels }: State) {
-    return channels.entities.get("root");
+export function directSpaces({ spaces }: State) {
+    return spaces.filter((space) => space.type === "direct");
 }
 
-export function channels({ channels }: State) {
-    return channels.entities;
+export function spaces({ spaces }: State) {
+    return spaces;
 }
 
 export function checklists({ checklists }: State) {
@@ -76,25 +75,25 @@ export function checklists({ checklists }: State) {
 }
 
 export function threads({ threads, route }: State) {
-    return threads.entities.get(route.params.get("channel_id"));
+    return threads.entities.get(route.params.get("space_id"));
 }
 
 export default {
-    site,
-    config,
+    role,
     auth,
     users,
+    space,
     roles,
     cards,
+    config,
+    spaces,
     threads,
     columns,
-    channel,
     members,
     statuses,
-    channels,
     workspace,
     checklists,
-    workspaces,
     preferences,
-    directChannels,
+    directSpaces,
+    permissions,
 };

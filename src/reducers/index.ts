@@ -1,9 +1,9 @@
 import { Record } from "immutable";
 import { Action } from "redux";
 import config from "./config";
-import site from "./site";
 import role from "./role";
 import user from "./user";
+import board from "./board";
 import auth from "./auth";
 import snack from "./snack";
 import route from "./route";
@@ -14,7 +14,7 @@ import preferences from "./preferences";
 import drawer from "./drawer";
 import presence from "./presence";
 import card from "./card";
-import channel from "./channel";
+import space from "./space";
 import column from "./column";
 import workspace from "./workspace";
 import checklist from "./checklist";
@@ -32,12 +32,12 @@ const INIT = "@@INIT";
 
 const RootStates = {
     config: config.state,
-    site: site.state,
     roles: role.state,
     auth: auth.state,
     route: route.state,
     users: user.state,
     cards: card.state,
+    boards: board.state,
     members: member.state,
     status: status.state,
     preferences: preferences.state,
@@ -46,12 +46,12 @@ const RootStates = {
     drawer: drawer.state,
     threads: thread.state,
     columns: column.state,
-    channels: channel.state,
-    workspaces: workspace.state,
+    spaces: space.state,
+    workspace: workspace.state,
     checklists: checklist.state,
 };
 
-export class RootStateRecord extends Record(RootStates, "root"){}
+export class RootStateRecord extends Record(RootStates, "root") {}
 
 export const RootState = new RootStateRecord({});
 
@@ -90,7 +90,6 @@ function createReducer<T>(
 
 const reducers = {
     config: createReducer(config.reducers, config.state),
-    site: createReducer(site.reducers, site.state),
     roles: createReducer(role.reducers, role.state),
     auth: createReducer(auth.reducers, auth.state),
     preferences: createReducer(preferences.reducers, preferences.state),
@@ -98,14 +97,15 @@ const reducers = {
     users: createReducer(user.reducers, user.state),
     cards: createReducer(card.reducers, card.state),
     members: createReducer(member.reducers, member.state),
+    boards: createReducer(board.reducers, board.state),
     presence: createReducer(presence.reducers, presence.state),
     drawer: createReducer(drawer.reducers, drawer.state),
     status: createReducer(status.reducers, status.state),
     snacks: createReducer(snack.reducers, snack.state),
     threads: createReducer(thread.reducers, thread.state),
     columns: createReducer(column.reducers, column.state),
-    channels: createReducer(channel.reducers, channel.state),
-    workspaces: createReducer(workspace.reducers, workspace.state),
+    spaces: createReducer(space.reducers, space.state),
+    workspace: createReducer(workspace.reducers, workspace.state),
     checklists: createReducer(checklist.reducers, checklist.state),
 };
 

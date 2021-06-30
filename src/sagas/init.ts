@@ -12,7 +12,7 @@ function* workspaces(): Iterable<any> {
 }
 
 function* channels(): Iterable<any> {
-    yield put({ type: "FETCH_CHANNELS" });
+    yield put({ type: "FETCH_SPACES" });
 }
 
 function* role(): Iterable<any> {

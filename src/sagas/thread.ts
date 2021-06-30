@@ -61,7 +61,7 @@ function* load({ payload, meta }: LoadThreadAction): Iterable<any> {
 
 function* loadTopics({ payload, meta }: LoadTopicsAction): Iterable<any> {
     try {
-        const { data } = (yield Client.fetchChannelTopics(payload)) as any;
+        const { data } = (yield Client.fetchSpaceTopics(payload)) as any;
         yield put(putThreads(data));
         meta.success(data);
     } catch (e) {
@@ -102,7 +102,7 @@ function* trash({ payload, meta }: DeleteTopicAction): Iterable<any> {
         yield put(
             threadDeleted({
                 id: payload.thread_id,
-                channel_id: payload.channel_id,
+                space_id: payload.space_id,
             })
         );
         meta.success(data);
@@ -173,7 +173,6 @@ function* conversation({
         );
 
         const { data } = (yield Client.fetchMessages({
-            channel_id: payload.channel_id,
             thread_id: payload.thread_id,
             params,
         })) as any;
