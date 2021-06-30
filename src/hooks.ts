@@ -8,6 +8,7 @@ import selector from "./selectors";
 import {
     Presence,
     CardRecord,
+    LabelRecord,
     Permissions,
     ChecklistRecord,
     ThreadRecord,
@@ -320,8 +321,8 @@ export function useCard(id: string) {
     return useSelector(selector);
 }
 
-export function useLabels() {
-    return [];
+export function useLabels(id?: string) {
+    return List<LabelRecord>();
 }
 
 export function useCardChecklists(id: string): Map<string, ChecklistRecord> {
