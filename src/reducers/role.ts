@@ -17,33 +17,22 @@ import {
 
 type Roles = OrderedMap<string, RoleRecord>;
 
-export type State = Map<string, Roles>;
+export type State = Roles;
 
 export const state: State = Map();
 
 function put(state: State, { payload }: PutSpaceRoleAction) {
-    let roles = state.get(payload.space_id, OrderedMap<string, RoleRecord>());
-
-    roles = roles.set(payload.id, new RoleRecord(payload));
-    return state.set(payload.space_id, roles);
+    return state.set(payload.id, new RoleRecord(payload));
 }
 
 function puts(state: State, { payload }: PutSpaceRolesAction) {
     return payload.reduce((state, role) => {
-        let roles = state.get(role.space_id, OrderedMap<string, RoleRecord>());
-
-        roles = roles.set(role.id, new RoleRecord(role));
-        return state.set(role.space_id, roles);
+        return state.set(role.id, new RoleRecord(role));
     }, state);
 }
 
 function patch(state: State, { payload }: PatchSpaceRoleAction) {
-    const path = [payload.space_id, payload.id];
-    if (state.getIn([payload.space_id, payload.id])) {
-        return state.mergeIn(path, payload);
-    } else {
-        return state;
-    }
+    return state.mergeIn([payload.id], payload);
 }
 
 function patches(state: State, { payload }: PatchSpaceRolesAction) {
@@ -60,12 +49,7 @@ function patches(state: State, { payload }: PatchSpaceRolesAction) {
 }
 
 function remove(state: State, { payload }: RemoveSpaceRoleAction) {
-    let roles = state.get(payload.space_id);
-    if (roles) {
-        return state.set(payload.space_id, roles.delete(payload.id));
-    } else {
-        return state;
-    }
+    return state.delete(payload.space_id);
 }
 
 export const reducers = {
