@@ -321,8 +321,9 @@ export function useCard(id: string) {
     return useSelector(selector);
 }
 
-export function useLabels(id?: string) {
-    return List<LabelRecord>();
+export function useLabels(id: string) {
+    const { labels } = useBoard(id)!;
+    return labels;
 }
 
 export function useCardChecklists(id: string): Map<string, ChecklistRecord> {
