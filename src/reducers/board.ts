@@ -1,6 +1,8 @@
+import { Map } from "immutable";
 import common from "./common";
+import { BoardRecord } from "../records";
 
-export const state = {};
+export const state = Map<string, BoardRecord>();
 
 export const reducers = {
     PUT_BOARD: common.put,

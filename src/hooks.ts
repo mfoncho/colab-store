@@ -334,6 +334,10 @@ export function useCardChecklists(id: string): Map<string, ChecklistRecord> {
     return useSelector(selector);
 }
 
+export function useBoard(id: string) {
+    return useSelector(({ boards }: State) => boards.get(id));
+}
+
 export function usePermissions() {
     const { permissions } = useAuth();
     return permissions;

@@ -6,7 +6,7 @@ export type WorkspacesState = Map<string, any>;
 const state: WorkspacesState = Map();
 
 function PUT_WORKSPACE(_state: WorkspacesState, { payload }: any) {
-    return Map(payload);
+    return Map<string, any>(payload);
 }
 
 function PUT_WORKSPACES(state: WorkspacesState, action: any): WorkspacesState {
