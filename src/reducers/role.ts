@@ -1,5 +1,5 @@
 import { Map, OrderedMap } from "immutable";
-import { SpaceRoleRecord } from "../records";
+import { RoleRecord } from "../records";
 import {
     PutSpaceRoleAction,
     PutSpaceRolesAction,
@@ -15,30 +15,24 @@ import {
     REMOVE_SPACE_ROLE,
 } from "../actions/types";
 
-type Roles = OrderedMap<string, SpaceRoleRecord>;
+type Roles = OrderedMap<string, RoleRecord>;
 
 export type State = Map<string, Roles>;
 
 export const state: State = Map();
 
 function put(state: State, { payload }: PutSpaceRoleAction) {
-    let roles = state.get(
-        payload.space_id,
-        OrderedMap<string, SpaceRoleRecord>()
-    );
+    let roles = state.get(payload.space_id, OrderedMap<string, RoleRecord>());
 
-    roles = roles.set(payload.id, new SpaceRoleRecord(payload));
+    roles = roles.set(payload.id, new RoleRecord(payload));
     return state.set(payload.space_id, roles);
 }
 
 function puts(state: State, { payload }: PutSpaceRolesAction) {
     return payload.reduce((state, role) => {
-        let roles = state.get(
-            role.space_id,
-            OrderedMap<string, SpaceRoleRecord>()
-        );
+        let roles = state.get(role.space_id, OrderedMap<string, RoleRecord>());
 
-        roles = roles.set(role.id, new SpaceRoleRecord(role));
+        roles = roles.set(role.id, new RoleRecord(role));
         return state.set(role.space_id, roles);
     }, state);
 }

@@ -40,8 +40,8 @@ export function columns({ columns, route }: State) {
     return columns.entities.get(route.params.get("board_id"));
 }
 
-export function roles({ roles, route }: State) {
-    return roles.get(route.params.get("space_id"));
+export function roles({ roles }: State) {
+    return roles;
 }
 
 export function workspace({ workspace }: State) {
