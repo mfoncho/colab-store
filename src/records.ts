@@ -392,11 +392,23 @@ export class ThreadRecord
         return data;
     }
 
-    get isMain() {
+    get is_main() {
         return this.type == "main";
     }
 
-    get isTopic() {
+    get is_reply() {
+        return this.type == "reply";
+    }
+
+    get is_comment() {
+        return this.type == "comment";
+    }
+
+    get is_email() {
+        return this.type == "email";
+    }
+
+    get is_topic() {
         return this.type == "topic";
     }
 
