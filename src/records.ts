@@ -104,7 +104,6 @@ export class AuthRecord
             id: "",
             token: "",
             role_id: "",
-            timestamp: "",
             permissions: new Permissions(),
         },
         "auth"
@@ -164,8 +163,8 @@ export class SpaceRecord
         topic_id: null as string | null,
         member_id: "0" as Id,
         roles: Map<string, SpaceRoleRecord>(),
-        timestamp: "",
         joined_at: "",
+        created_at: "",
     })
     implements Unique {
     constructor(data: any) {
@@ -184,15 +183,15 @@ export class SpaceRecord
         return data;
     }
 
-    get isBoard() {
+    get is_board() {
         return this.type === "board";
     }
 
-    get isDirect() {
+    get is_direct() {
         return this.type === "direct";
     }
 
-    get isDiscuss() {
+    get is_discuss() {
         return this.type === "discuss";
     }
 }
@@ -217,7 +216,7 @@ export class CardRecord
         position: 0,
         thread_id: "",
         column_id: "",
-        timestamp: "",
+        created_at: "",
         board_id: "",
         description: "",
         archived_at: null as string | null,
@@ -252,7 +251,7 @@ export class TaskRecord
         id: "",
         name: "",
         complete: false,
-        timestamp: "",
+        created_at: "",
     })
     implements Unique {}
 
@@ -262,7 +261,7 @@ export class ChecklistRecord
         name: "",
         tasks: List(),
         card_id: "",
-        timestamp: "",
+        created_at: "",
         user_id: "",
     })
     implements Unique {
@@ -373,7 +372,7 @@ export class ThreadRecord
         id: "0" as Id,
         type: "topic" as ThreadType,
         name: "",
-        timestamp: "",
+        created_at: "",
         space_id: "0" as Id,
         message_count: 0,
         last_message_id: "" as Id,
