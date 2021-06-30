@@ -82,6 +82,8 @@ export function useWorkspace() {
     return useSelector(selector.workspace);
 }
 
+export const useSite = useWorkspace;
+
 export function useStatuses() {
     return useSelector(selector.statuses);
 }
