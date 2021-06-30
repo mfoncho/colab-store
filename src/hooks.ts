@@ -1,6 +1,6 @@
 import { Map, List, OrderedMap } from "immutable";
 import { useDispatch, useSelector } from "react-redux";
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 
 import { State } from "./index";
 
@@ -8,6 +8,7 @@ import selector from "./selectors";
 import {
     Presence,
     CardRecord,
+    Permissions,
     ChecklistRecord,
     ThreadRecord,
     UserRecord,
@@ -333,14 +334,25 @@ export function useCardChecklists(id: string): Map<string, ChecklistRecord> {
     return useSelector(selector);
 }
 
-export function useSpacePermission() {
-    const space = useSpace();
-    const { permissions, role_id } = useAuth();
-    if (space) {
-        const custom = space.roles.find((role) => role.role_id == role_id);
-        if (custom) {
-            return permissions.merge(custom.permissions);
-        }
-    }
+export function usePermissions() {
+    const { permissions } = useAuth();
     return permissions;
+}
+
+export function useSpacePermissions() {
+    const { permissions, role_id } = useAuth();
+    const [modified, setPermissions] = useState<Permissions>(permissions);
+    const space = useSpace();
+    let space_role = null as any;
+    if (space) {
+        space_role = space.roles.find((role) => role.role_id == role_id);
+    }
+
+    useCallback(() => {
+        if (space_role) {
+            setPermissions(permissions.merge(space_role.permissions));
+        }
+    }, [role_id, space_role, permissions]);
+
+    return modified;
 }
