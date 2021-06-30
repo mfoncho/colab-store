@@ -183,6 +183,18 @@ export class SpaceRecord
     static objectFromJS(data: any) {
         return data;
     }
+
+    get isBoard() {
+        return this.type === "board";
+    }
+
+    get isDirect() {
+        return this.type === "direct";
+    }
+
+    get isDiscuss() {
+        return this.type === "discuss";
+    }
 }
 
 export class CardLabel
