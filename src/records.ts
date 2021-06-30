@@ -290,25 +290,7 @@ export class ChecklistRecord
     }
 }
 
-export class WorkspaceRecord
-    extends Record({
-        id: "0",
-        name: "",
-        icon: "",
-    })
-    implements Unique {
-    constructor(props: any) {
-        super(WorkspaceRecord.objectFromJS(props));
-    }
-
-    static mapFromJS(data: any) {
-        return Map(WorkspaceRecord.objectFromJS(data));
-    }
-
-    static objectFromJS(data: any) {
-        return data;
-    }
-}
+export type WorkspaceRecord = Map<string, any>;
 
 export class MemberRecord
     extends Record({

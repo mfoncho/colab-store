@@ -1,17 +1,12 @@
 import { Map } from "immutable";
 import { STORE_INIT } from "../actions/types";
-import { WorkspaceRecord } from "../records";
 
-export type WorkspacesState = Map<string, WorkspaceRecord>;
+export type WorkspacesState = Map<string, any>;
 
 const state: WorkspacesState = Map();
 
-function PUT_WORKSPACE(state: WorkspacesState, { payload }: any) {
-    if (state.has(payload.id)) {
-        return PATCH_WORKSPACE(state, { payload });
-    } else {
-        return state.set(payload.id, new WorkspaceRecord(payload));
-    }
+function PUT_WORKSPACE(_state: WorkspacesState, { payload }: any) {
+    return Map(payload);
 }
 
 function PUT_WORKSPACES(state: WorkspacesState, action: any): WorkspacesState {
@@ -24,14 +19,7 @@ function PATCH_WORKSPACE(
     state: WorkspacesState,
     { payload }: any
 ): WorkspacesState {
-    if (state.has(payload.id)) {
-        const workspace = WorkspaceRecord.objectFromJS(payload);
-        return state.withMutations((state: WorkspacesState) => {
-            state.mergeIn([payload.id], workspace);
-        });
-    } else {
-        return state;
-    }
+    return state.merge(payload);
 }
 
 function PATCH_WORKSPACES(
@@ -44,11 +32,8 @@ function PATCH_WORKSPACES(
     return state;
 }
 
-function REMOVE_WORKSPACE(
-    state: WorkspacesState,
-    action: any
-): WorkspacesState {
-    return state.delete(action.payload);
+function REMOVE_WORKSPACE(): WorkspacesState {
+    return Map<string, any>();
 }
 
 export const reducers = {
