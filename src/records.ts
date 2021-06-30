@@ -110,6 +110,14 @@ export class AuthRecord
     )
     implements Unique {}
 
+export class RoleRecord
+    extends Record({
+        id: "",
+        name: "",
+        color: "",
+    })
+    implements Unique {}
+
 export class SpaceRoleRecord
     extends Record({
         id: "0" as Id,
