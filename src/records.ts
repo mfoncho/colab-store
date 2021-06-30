@@ -157,6 +157,7 @@ export class SpaceRecord
         id: "0" as Id,
         icon: "",
         name: "colab",
+        users: List<Id>(),
         type: "discuss" as SpaceType,
         access: "public" as AccessType,
         board_id: null as string | null,
