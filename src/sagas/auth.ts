@@ -86,7 +86,7 @@ function* doLogout({ meta }: LogoutAction): Iterable<any> {
 }
 
 export const tasks = [
-    { effect: takeEvery, type: INIT, handler: init },
+    //{ effect: takeEvery, type: INIT, handler: init },
     { effect: takeEvery, type: AUTH, handler: auth },
     { effect: takeEvery, type: LOGIN, handler: doLogin },
     { effect: takeEvery, type: LOGOUT, handler: doLogout },

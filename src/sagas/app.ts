@@ -19,10 +19,14 @@ import {
 import { State } from "..";
 
 function* init(): Iterable<any> {
+    /** 
+     * 
     let { config, auth } = ((yield select()) as any) as State;
     socket.connect(config.socket_api_endpoint, {
         token: auth.token,
     });
+     * 
+    */
 }
 
 function* loadConfig(payload: LoadConfigAction): Iterable<any> {
