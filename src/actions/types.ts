@@ -10,11 +10,17 @@ export type SET_SITE = typeof SET_SITE;
 export const SET_AUTH = "SET_AUTH";
 export type SET_AUTH = typeof SET_AUTH;
 
+export const LOAD_AUTH = "LOAD_AUTH";
+export type LOAD_AUTH = typeof LOAD_AUTH;
+
 export const SET_CONFIG = "SET_CONFIG";
 export type SET_CONFIG = typeof SET_CONFIG;
 
 export const LOAD_SITE = "LOAD_SITE";
 export type LOAD_SITE = typeof LOAD_SITE;
+
+export const AUTH = "AUTH";
+export type  AUTH = typeof AUTH;
 
 export const LOAD_CONFIG = "LOAD_CONFIG";
 export type LOAD_CONFIG = typeof LOAD_CONFIG;

@@ -1,5 +1,5 @@
 import { Action, createAction, createIOAction, IOAction } from ".";
-import { ROUTE, LOGIN, STORE_RELATED, SET_SITE, LOGOUT, SET_CONFIG, SET_AUTH, LOAD_SITE, LOAD_CONFIG, STORE_INIT } from "./types";
+import { ROUTE, LOGIN, AUTH, STORE_RELATED, SET_SITE, LOGOUT, SET_CONFIG, SET_AUTH, LOAD_SITE, LOAD_CONFIG, STORE_INIT, LOAD_AUTH } from "./types";
 import { NormalizedRelated } from "../schemas";
 import { io } from "@colab/client";
 
@@ -15,6 +15,8 @@ export interface ILoginPayload{
     remember_me?: boolean;
 }
 
+export type AuthAction = Action<AUTH, io.Auth | {}>
+
 export type StoreIntAction = Action<STORE_INIT, {}>
 
 export type RouteAction = Action<ROUTE, any>;
@@ -26,6 +28,8 @@ export type StoreRelatedAction = Action<STORE_RELATED, NormalizedRelated>;
 export type SetSiteAction = Action<SET_SITE, Partial<io.Site>>
 
 export type SetConfigAction = Action<SET_CONFIG, Partial<io.Config>>
+
+export type LoadAuthAction = IOAction<LOAD_AUTH, any, io.Auth>
 
 export type LogoutAction = IOAction<LOGOUT, any, any>
 
@@ -39,6 +43,13 @@ export function setSite(payload: Partial<io.Site>): SetSiteAction{
     return createAction(SET_SITE, payload);
 }
 
+export function authenticate(payload: io.Auth): AuthAction {
+    return createAction(AUTH, payload);
+}
+
+export function loadAuth(): LoadAuthAction {
+    return createIOAction<io.Auth, LOAD_AUTH>(LOAD_AUTH, {});
+}
 
 export function loadSite(): LoadSiteAction{
     return createIOAction<io.Site, LOAD_SITE>(LOAD_SITE,{});
