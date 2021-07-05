@@ -26,6 +26,7 @@ import {
     removeSpace,
     putSpaces,
     LoadSpacesAction,
+    loadSpaces,
 } from "../actions/space";
 import {
     INIT,
@@ -57,30 +58,6 @@ function* init(): Iterable<any> {
     } catch (e) {}
 }
 
-function* archive({ payload, meta }: ArchiveSpaceAction): Iterable<any> {
-    try {
-        const { data } = (yield Client.archiveSpace(payload)) as any;
-        const [normalized, related] = Schema.normalizeOne(data);
-        yield put(storeRelated(related));
-        yield put(spaceArchived(normalized as any));
-        meta.success(data);
-    } catch (e) {
-        meta.error(e.toString());
-    }
-}
-
-function* unarchive({ payload, meta }: UnarchiveSpaceAction): Iterable<any> {
-    try {
-        const { data } = (yield Client.unarchiveSpace(payload)) as any;
-        const [normalized, related] = Schema.normalizeOne(data);
-        yield put(storeRelated(related));
-        yield put(spaceUnarchived(normalized as any));
-        meta.success(data);
-    } catch (e) {
-        meta.error(e.toString());
-    }
-}
-
 function* load({ payload, meta }: LoadSpaceAction): Iterable<any> {
     try {
         const { data } = (yield Client.getSpace(payload)) as any;
@@ -105,6 +82,30 @@ function* loads({ payload, meta }: LoadSpacesAction): Iterable<any> {
     }
 }
 
+function* archive({ payload, meta }: ArchiveSpaceAction): Iterable<any> {
+    try {
+        const { data } = (yield Client.archiveSpace(payload)) as any;
+        const [normalized, related] = Schema.normalizeOne(data);
+        yield put(storeRelated(related));
+        yield put(spaceArchived(normalized as any));
+        meta.success(data);
+    } catch (e) {
+        meta.error(e.toString());
+    }
+}
+
+function* unarchive({ payload, meta }: UnarchiveSpaceAction): Iterable<any> {
+    try {
+        const { data } = (yield Client.unarchiveSpace(payload)) as any;
+        const [normalized, related] = Schema.normalizeOne(data);
+        yield put(storeRelated(related));
+        yield put(spaceUnarchived(normalized as any));
+        meta.success(data);
+    } catch (e) {
+        meta.error(e.toString());
+    }
+}
+
 function* join({ payload, meta }: JoinSpaceAction): Iterable<any> {
     try {
         const { data } = (yield Client.joinSpace(payload)) as any;
@@ -115,15 +116,11 @@ function* join({ payload, meta }: JoinSpaceAction): Iterable<any> {
     }
 }
 
-function* patch({
-    payload,
-}: PatchSpaceAction | SpaceArchivedAction): Iterable<any> {
+function* patch({payload}: PatchSpaceAction | SpaceArchivedAction): Iterable<any> {
     yield put(patchSpace(payload));
 }
 
-function* subscribe({
-    payload,
-}: PutSpaceAction | PutSpacesAction): Iterable<any> {
+function* subscribe({payload}: PutSpaceAction | PutSpacesAction): Iterable<any> {
     if (!Array.isArray(payload)) {
         payload = [payload];
     }
@@ -167,12 +164,12 @@ function* subscribe({
             dispatch(roleDeleted(payload));
         });
 
-        ch.on("member.joined", (payload: io.Member) => {
-            dispatch(memberJoined(payload));
-        });
-
         ch.on("member.left", (payload: io.Member) => {
             dispatch(memberLeft(payload));
+        });
+
+        ch.on("member.joined", (payload: io.Member) => {
+            dispatch(memberJoined(payload));
         });
 
         ch.join()
