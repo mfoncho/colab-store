@@ -53,6 +53,7 @@ function* init(): Iterable<any> {
     try {
         const { data } = (yield Client.fetchSpaces({})) as any;
         const [normalized, related] = Schema.normalizeMany(data);
+        console.log(data)
         yield put(storeRelated(related));
         yield put(putSpaces(normalized));
     } catch (e) {}
